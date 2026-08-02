@@ -1,6 +1,4 @@
-import { useRef, useState } from 'react'
 import styled from '@emotion/styled'
-import { BGM_SRC } from '../../constants/weddingInfo'
 
 const ToggleButton = styled.button`
   position: fixed;
@@ -15,27 +13,15 @@ const ToggleButton = styled.button`
   cursor: pointer;
 `
 
-export function MusicPlayer() {
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const [playing, setPlaying] = useState(false)
+interface MusicPlayerProps {
+  playing: boolean
+  onToggle: () => void
+}
 
-  const toggle = () => {
-    const audio = audioRef.current
-    if (!audio) return
-    if (playing) {
-      audio.pause()
-    } else {
-      audio.play().catch(() => {})
-    }
-    setPlaying(!playing)
-  }
-
+export function MusicPlayer({ playing, onToggle }: MusicPlayerProps) {
   return (
-    <>
-      <audio ref={audioRef} src={BGM_SRC} loop />
-      <ToggleButton type="button" onClick={toggle} aria-label={playing ? '음악 끄기' : '음악 켜기'}>
-        {playing ? '🔊' : '🔈'}
-      </ToggleButton>
-    </>
+    <ToggleButton type="button" onClick={onToggle} aria-label={playing ? '음악 끄기' : '음악 켜기'}>
+      {playing ? '🔊' : '🔈'}
+    </ToggleButton>
   )
 }

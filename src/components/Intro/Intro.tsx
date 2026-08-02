@@ -22,10 +22,9 @@ const pulse = keyframes`
   50% { opacity: 0.4; }
 `
 
-const Wrapper = styled.div<{ leaving: boolean }>`
-  position: fixed;
-  inset: 0;
-  z-index: 300;
+const Wrapper = styled.section`
+  position: relative;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,8 +34,6 @@ const Wrapper = styled.div<{ leaving: boolean }>`
   text-align: center;
   cursor: pointer;
   overflow: hidden;
-  transition: opacity 0.6s ease;
-  opacity: ${({ leaving }) => (leaving ? 0 : 1)};
 `
 
 const Photo = styled.div`
@@ -83,21 +80,24 @@ const Hint = styled.p`
 `
 
 export function Intro({ onEnter }: IntroProps) {
-  const [leaving, setLeaving] = useState(false)
+  const [entered, setEntered] = useState(false)
 
   const handleEnter = () => {
-    setLeaving(true)
-    setTimeout(onEnter, 600)
+    if (!entered) {
+      setEntered(true)
+      onEnter()
+    }
+    document.getElementById('content-start')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <Wrapper leaving={leaving} onClick={handleEnter} role="button" aria-label="청첩장 시작하기">
+    <Wrapper onClick={handleEnter} role="button" aria-label="청첩장 시작하기">
       <Photo />
       <Content>
         <Names>민수 ・ 수현</Names>
         <Date>2026. 11. 01 SUN</Date>
       </Content>
-      <Hint>화면을 터치해주세요</Hint>
+      {!entered && <Hint>화면을 터치해주세요</Hint>}
     </Wrapper>
   )
 }

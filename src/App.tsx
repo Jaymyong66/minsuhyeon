@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { ThemeProvider } from '@emotion/react'
 import { theme } from './theme/theme'
+import { BGM_SRC } from './constants/weddingInfo'
 import { Intro } from './components/Intro/Intro'
 import { Greeting } from './components/Greeting/Greeting'
 import { Ceremony } from './components/Ceremony/Ceremony'
@@ -12,23 +13,39 @@ import { Guestbook } from './components/Guestbook/Guestbook'
 import { MusicPlayer } from './components/common/MusicPlayer'
 
 function App() {
-  const [entered, setEntered] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const [playing, setPlaying] = useState(false)
+
+  const playMusic = () => {
+    audioRef.current
+      ?.play()
+      .then(() => setPlaying(true))
+      .catch(() => {})
+  }
+
+  const toggleMusic = () => {
+    if (playing) {
+      audioRef.current?.pause()
+      setPlaying(false)
+    } else {
+      playMusic()
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
-      {!entered && <Intro onEnter={() => setEntered(true)} />}
-      {entered && (
-        <>
-          <MusicPlayer />
-          <Greeting />
-          <Ceremony />
-          <Gallery />
-          <PhotoUpload />
-          <Contacts />
-          <LocationMap />
-          <Guestbook />
-        </>
-      )}
+      <audio ref={audioRef} src={BGM_SRC} loop />
+      <MusicPlayer playing={playing} onToggle={toggleMusic} />
+      <Intro onEnter={playMusic} />
+      <div id="content-start">
+        <Greeting />
+        <Ceremony />
+        <Gallery />
+        <PhotoUpload />
+        <Contacts />
+        <LocationMap />
+        <Guestbook />
+      </div>
     </ThemeProvider>
   )
 }

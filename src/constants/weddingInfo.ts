@@ -38,4 +38,4 @@ export const PHOTO_UPLOAD_FORM_URL = 'https://form.naver.com/REPLACE_ME'
 // TODO: NCP Maps API 키 발급 전까지 placeholder. TODO.md 참고
 export const NAVER_MAP_CLIENT_ID = ''
 
-export const BGM_SRC = '/bgm.mp3'
+export const BGM_SRC = '/bgm.m4a'
