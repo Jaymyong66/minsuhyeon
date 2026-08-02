@@ -13,7 +13,7 @@
 
 ## 3. 지도 (네이버 지도)
 - [ ] [네이버 클라우드 플랫폼(NCP)](https://www.ncloud.com/)에서 Maps API 키 발급
-- [ ] 서비스 도메인에 `wedding.minsuhyeon.life`와 로컬 개발용 `localhost` 등록
+- [ ] 서비스 도메인에 `www.minsuhyeon.life`와 로컬 개발용 `localhost` 등록
 - [ ] 발급받은 키를 `src/constants/weddingInfo.ts`의 `NAVER_MAP_CLIENT_ID`에 입력 (키 입력 전까지는 placeholder로 표시됨)
 
 ## 4. 사진 / 배경음악
@@ -25,8 +25,7 @@
 ## 5. 배포
 - [ ] GitHub 저장소(`Jaymyong66/minsuhyeon`)에 push
 - [ ] Vercel에 프로젝트 연결 후 위 환경변수 등록, 배포
-- [ ] Vercel 프로젝트 Settings → Domains에서 `wedding.minsuhyeon.life` 추가
-- [ ] 호스팅케이알 DNS에 CNAME 레코드 추가: `wedding` → Vercel이 안내하는 주소(`cname.vercel-dns.com`)
+- [ ] Vercel 프로젝트 Settings → Domains에서 `www.minsuhyeon.life` 추가 (호스팅케이알 DNS의 `www` CNAME 레코드는 이미 Vercel 값으로 설정되어 있음 — Invalid Configuration이 계속되면 도메인을 삭제 후 재추가해 재검증 트리거)
 
 ## 6. 최종 확인
 - [ ] 카카오톡으로 링크를 공유해서 인앱 브라우저에서 실제로 열어보고, 배경음악이 터치 후 재생되는지 확인
