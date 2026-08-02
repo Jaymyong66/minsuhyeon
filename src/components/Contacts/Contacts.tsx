@@ -1,33 +1,27 @@
-import { useState } from 'react'
 import styled from '@emotion/styled'
-import { Modal } from '../common/Modal'
 import { CopyButton } from '../common/CopyButton'
 import { formatAccountForCopy } from '../common/formatAccount'
 import { GROOM_CONTACTS, BRIDE_CONTACTS, type ContactPerson } from '../../constants/weddingInfo'
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)};
-  text-align: center;
 `
 
 const Title = styled.h2`
   font-family: ${({ theme }) => theme.font.serif};
   font-size: 1.3rem;
+  text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `
 
-const ButtonRow = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
+const SideGroup = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
 `
 
-const SideButton = styled.button`
-  padding: ${({ theme }) => theme.spacing(1.5)} ${({ theme }) => theme.spacing(3)};
-  border: 1px solid ${({ theme }) => theme.color.border};
-  border-radius: 999px;
-  background: ${({ theme }) => theme.color.surface};
-  cursor: pointer;
+const SideLabel = styled.h3`
+  font-size: 0.95rem;
+  color: ${({ theme }) => theme.color.textMuted};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `
 
 const PersonRow = styled.div`
@@ -36,41 +30,44 @@ const PersonRow = styled.div`
   align-items: center;
   padding: ${({ theme }) => theme.spacing(1.5)} 0;
   border-bottom: 1px solid ${({ theme }) => theme.color.border};
-  text-align: left;
 `
 
 const PersonInfo = styled.div`
   font-size: 0.85rem;
+  text-align: left;
 `
 
-type Side = 'groom' | 'bride' | null
+function ContactList({ people }: { people: ContactPerson[] }) {
+  return (
+    <>
+      {people.map((c) => (
+        <PersonRow key={c.role}>
+          <PersonInfo>
+            <div>
+              {c.role} {c.name}
+            </div>
+            <div>{c.phone}</div>
+            <div>{formatAccountForCopy(c.bank, c.account)}</div>
+          </PersonInfo>
+          <CopyButton value={formatAccountForCopy(c.bank, c.account)} />
+        </PersonRow>
+      ))}
+    </>
+  )
+}
 
 export function Contacts() {
-  const [open, setOpen] = useState<Side>(null)
-  const contacts: ContactPerson[] = open === 'groom' ? GROOM_CONTACTS : BRIDE_CONTACTS
-
   return (
     <Section>
-      <Title>연락처</Title>
-      <ButtonRow>
-        <SideButton onClick={() => setOpen('groom')}>신랑측</SideButton>
-        <SideButton onClick={() => setOpen('bride')}>신부측</SideButton>
-      </ButtonRow>
-
-      <Modal open={open !== null} onClose={() => setOpen(null)}>
-        {contacts.map((c) => (
-          <PersonRow key={c.role}>
-            <PersonInfo>
-              <div>
-                {c.role} {c.name}
-              </div>
-              <div>{c.phone}</div>
-              <div>{formatAccountForCopy(c.bank, c.account)}</div>
-            </PersonInfo>
-            <CopyButton value={formatAccountForCopy(c.bank, c.account)} />
-          </PersonRow>
-        ))}
-      </Modal>
+      <Title>마음 전하실 곳</Title>
+      <SideGroup>
+        <SideLabel>신랑측</SideLabel>
+        <ContactList people={GROOM_CONTACTS} />
+      </SideGroup>
+      <SideGroup>
+        <SideLabel>신부측</SideLabel>
+        <ContactList people={BRIDE_CONTACTS} />
+      </SideGroup>
     </Section>
   )
 }

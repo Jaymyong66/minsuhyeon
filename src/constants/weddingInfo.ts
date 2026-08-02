@@ -4,6 +4,8 @@ export const VENUE = {
   name: '서울올림픽파크텔 1F 올림피아홀',
   address: '서울올림픽파크텔',
   directionsUrl: 'https://www.parktel.co.kr/intrcn/stretGuidanceView.do',
+  lat: 37.5221984,
+  lng: 127.1164983,
 }
 
 export const GREETING_MESSAGE = `스무 살 11월,

@@ -28,6 +28,22 @@ const Address = styled.p`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `
 
+const NavButtonRow = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: center;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`
+
+const NavButton = styled.a`
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: 999px;
+  color: ${({ theme }) => theme.color.text};
+  text-decoration: none;
+  font-size: 0.85rem;
+`
+
 const Button = styled.a`
   display: inline-block;
   padding: ${({ theme }) => theme.spacing(1.5)} ${({ theme }) => theme.spacing(3)};
@@ -36,6 +52,23 @@ const Button = styled.a`
   color: ${({ theme }) => theme.color.accent};
   text-decoration: none;
 `
+
+const encodedName = encodeURIComponent(VENUE.name)
+
+const NAV_LINKS = [
+  {
+    label: '티맵',
+    href: `tmap://route?goalname=${encodedName}&goalx=${VENUE.lng}&goaly=${VENUE.lat}`,
+  },
+  {
+    label: '카카오내비',
+    href: `kakaonavi://navigate?name=${encodedName}&x=${VENUE.lng}&y=${VENUE.lat}&coord_type=wgs84`,
+  },
+  {
+    label: '네이버지도',
+    href: `nmap://place?lat=${VENUE.lat}&lng=${VENUE.lng}&name=${encodedName}&appname=life.minsuhyeon.wedding`,
+  },
+]
 
 export function LocationMap() {
   return (
@@ -47,6 +80,13 @@ export function LocationMap() {
         <MapPlaceholder>지도 준비 중 (네이버 지도 API 키 발급 필요, TODO.md 참고)</MapPlaceholder>
       )}
       <Address>{VENUE.name}</Address>
+      <NavButtonRow>
+        {NAV_LINKS.map((nav) => (
+          <NavButton key={nav.label} href={nav.href}>
+            {nav.label}
+          </NavButton>
+        ))}
+      </NavButtonRow>
       <Button href={VENUE.directionsUrl} target="_blank" rel="noreferrer">
         오시는 길 / 주차 안내
       </Button>
