@@ -5,7 +5,7 @@
 - [ ] 방명록용 Notion 데이터베이스 생성 (필드: `Name`=Title, `Message`=Rich text, `CreatedAt`=Created time)
 - [ ] 생성한 DB에 위 Integration을 "연결"(공유) — 안 하면 API 호출 시 권한 오류 발생
 - [ ] `.env.local`에 `NOTION_TOKEN`, `NOTION_DATABASE_ID` 입력 (로컬 개발용, `.env.example` 참고)
-- [ ] Vercel 프로젝트 Settings → Environment Variables에도 동일하게 등록 (배포용, 로컬과 별개)
+- [ ] Cloudflare Pages 프로젝트 Settings → Environment variables에도 동일하게 등록 (Production/Preview 둘 다, 로컬과 별개)
 
 ## 2. 사진 업로드 (네이버 폼)
 - [ ] 네이버 폼에서 "파일첨부" 질문이 포함된 폼 생성
@@ -22,11 +22,18 @@
 - [x] 인트로(시작 장면) 사진 적용 완료 (`src/assets/hero-intro.jpeg`, 웹용으로 리사이즈/압축함)
 - [ ] `/Users/jaewi/Downloads/walk2.mp4`가 저작권 문제 없는 음원인지 확인
 
-## 5. 배포
+## 5. 배포 (Cloudflare Pages)
+
+> Vercel에서 커스텀 도메인 검증이 계속 실패해 Cloudflare로 이전함. Cloudflare는 DNS와 호스팅을 한 곳에서 관리해 도메인 연결이 훨씬 안정적임.
+
 - [ ] GitHub 저장소(`Jaymyong66/minsuhyeon`)에 push
-- [ ] Vercel에 프로젝트 연결 후 위 환경변수 등록, 배포
-- [ ] Vercel 프로젝트 Settings → Domains에서 `wedding.minsuhyeon.life` 추가
-- [ ] 호스팅케이알 DNS에 CNAME 레코드 추가: `wedding` → Vercel이 안내하는 주소(`cname.vercel-dns.com`)
+- [ ] [Cloudflare](https://dash.cloudflare.com/) 가입 → "Add a Site"로 `minsuhyeon.life` 추가 (기존 DNS 레코드 자동 스캔/가져오기)
+- [ ] 호스팅케이알(도메인 등록 업체)의 네임서버를 Cloudflare가 안내하는 네임서버로 변경 (Cloudflare가 도메인 관리 화면에서 정확한 값을 알려줌)
+- [ ] 네임서버 변경 후 Cloudflare 대시보드에서 "Active" 상태 될 때까지 대기 (보통 몇 분~몇 시간)
+- [ ] Cloudflare 대시보드 → Workers & Pages → "Create application" → Pages → GitHub 저장소(`Jaymyong66/minsuhyeon`) 연결
+- [ ] 빌드 설정: Build command `npm run build`, Build output directory `dist`
+- [ ] 위 환경변수(`NOTION_TOKEN`, `NOTION_DATABASE_ID`) 등록 후 배포
+- [ ] Pages 프로젝트 → Custom domains에서 `wedding.minsuhyeon.life` 추가 (네임서버가 이미 Cloudflare이므로 보통 자동으로 연결됨)
 
 ## 6. 최종 확인
 - [ ] 카카오톡으로 링크를 공유해서 인앱 브라우저에서 실제로 열어보고, 배경음악이 터치 후 재생되는지 확인

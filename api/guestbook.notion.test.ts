@@ -1,24 +1,19 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { createEntry, listEntries } from './guestbook.notion'
 
 const originalFetch = global.fetch
+const testEnv = { NOTION_TOKEN: 'test-token', NOTION_DATABASE_ID: 'test-db-id' }
 
 describe('guestbook.notion', () => {
-  beforeEach(() => {
-    vi.stubEnv('NOTION_TOKEN', 'test-token')
-    vi.stubEnv('NOTION_DATABASE_ID', 'test-db-id')
-  })
-
   afterEach(() => {
     global.fetch = originalFetch
-    vi.unstubAllEnvs()
   })
 
   it('createEntry posts a new page to the Notion database', async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
     global.fetch = fetchMock as unknown as typeof fetch
 
-    await createEntry({ name: '홍길동', message: '축하합니다!' })
+    await createEntry({ name: '홍길동', message: '축하합니다!' }, testEnv)
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://api.notion.com/v1/pages',
@@ -40,7 +35,7 @@ describe('guestbook.notion', () => {
       .fn()
       .mockResolvedValue({ ok: false, status: 400, json: async () => ({ message: 'bad request' }) }) as unknown as typeof fetch
 
-    await expect(createEntry({ name: '홍길동', message: '축하합니다!' })).rejects.toThrow()
+    await expect(createEntry({ name: '홍길동', message: '축하합니다!' }, testEnv)).rejects.toThrow()
   })
 
   it('listEntries queries the database sorted by created time descending and maps results', async () => {
@@ -61,7 +56,7 @@ describe('guestbook.notion', () => {
     })
     global.fetch = fetchMock as unknown as typeof fetch
 
-    const entries = await listEntries()
+    const entries = await listEntries(testEnv)
 
     expect(fetchMock).toHaveBeenCalledWith(
       'https://api.notion.com/v1/databases/test-db-id/query',
