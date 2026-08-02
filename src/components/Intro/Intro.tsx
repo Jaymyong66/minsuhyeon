@@ -3,8 +3,8 @@ import { keyframes } from '@emotion/react'
 import { DUMMY_HERO_IMAGE } from '../../constants/dummyImages'
 
 const fadeInPhoto = keyframes`
-  from { opacity: 0; transform: scale(1.08); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `
 
 const fadeInText = keyframes`
