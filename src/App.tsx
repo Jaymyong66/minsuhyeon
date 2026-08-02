@@ -12,16 +12,36 @@ import { LocationMap } from './components/LocationMap/LocationMap'
 import { Guestbook } from './components/Guestbook/Guestbook'
 import { MusicPlayer } from './components/common/MusicPlayer'
 
+const GESTURE_EVENTS = ['touchstart', 'click', 'scroll', 'keydown'] as const
+
 function App() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(false)
+  const startedRef = useRef(false)
 
-  useEffect(() => {
-    // 모바일 브라우저 자동재생 정책상 실패할 수 있음 — 실패 시 우측 상단 버튼으로 수동 재생
+  const startMusic = () => {
+    if (startedRef.current) return
+    startedRef.current = true
     audioRef.current
       ?.play()
       .then(() => setPlaying(true))
-      .catch(() => {})
+      .catch(() => {
+        startedRef.current = false
+      })
+  }
+
+  useEffect(() => {
+    // 모바일 브라우저는 사용자 제스처 없는 자동재생을 막기 때문에,
+    // 첫 터치/스크롤/클릭 등 어떤 상호작용이든 감지되면 그 시점에 재생을 시도한다.
+    const handleFirstGesture = () => startMusic()
+
+    GESTURE_EVENTS.forEach((event) =>
+      window.addEventListener(event, handleFirstGesture, { once: true, passive: true }),
+    )
+
+    return () => {
+      GESTURE_EVENTS.forEach((event) => window.removeEventListener(event, handleFirstGesture))
+    }
   }, [])
 
   const toggleMusic = () => {
@@ -29,10 +49,8 @@ function App() {
       audioRef.current?.pause()
       setPlaying(false)
     } else {
-      audioRef.current
-        ?.play()
-        .then(() => setPlaying(true))
-        .catch(() => {})
+      startedRef.current = false
+      startMusic()
     }
   }
 
