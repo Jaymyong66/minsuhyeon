@@ -17,10 +17,10 @@
 - [ ] 발급받은 키를 `src/constants/weddingInfo.ts`의 `NAVER_MAP_CLIENT_ID`에 입력 (키 입력 전까지는 placeholder로 표시됨)
 
 ## 4. 사진 / 배경음악
-- [x] 배경음악 연결 완료 (`walk2.mp4`에서 afconvert로 오디오 추출 → `public/bgm.m4a`, 인트로 터치 시 자동재생)
-- [ ] 실제 웨딩 사진이 정해지면 `src/constants/dummyImages.ts`의 배열을 실제 이미지 경로로 교체
-- [x] 인트로(시작 장면) 사진 적용 완료 (`src/assets/hero-intro.jpeg`, 웹용으로 리사이즈/압축함)
-- [ ] `/Users/jaewi/Downloads/walk2.mp4`가 저작권 문제 없는 음원인지 확인
+- [x] 배경음악 연결 완료 (`Work2.mp4`에서 afconvert로 오디오 추출 → `public/bgm.m4a`, 첫 상호작용 시 자동재생)
+- [x] 갤러리 사진 27장 적용 완료 (`민수현` 폴더 → `src/assets/gallery/001~027.jpg`, 파일명 순서대로 갤러리에 노출)
+- [x] 인트로(시작 장면) 사진 적용 완료 (`first.jpeg` → `src/assets/hero-intro.jpeg`, og:image도 동일 사진으로 갱신)
+- [ ] `/Users/jaewi/Downloads/Work2.mp4`가 저작권 문제 없는 음원인지 확인
 
 ## 5. 배포
 - [ ] GitHub 저장소(`Jaymyong66/minsuhyeon`)에 push
