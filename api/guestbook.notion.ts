@@ -5,9 +5,13 @@ export interface GuestbookEntry {
   createdAt: string
 }
 
-export interface NotionEnv {
-  NOTION_TOKEN: string
-  NOTION_DATABASE_ID: string
+function getConfig() {
+  const token = process.env.NOTION_TOKEN
+  const databaseId = process.env.NOTION_DATABASE_ID
+  if (!token || !databaseId) {
+    throw new Error('NOTION_TOKEN / NOTION_DATABASE_ID 환경변수가 설정되지 않았습니다.')
+  }
+  return { token, databaseId }
 }
 
 function notionHeaders(token: string) {
@@ -18,8 +22,8 @@ function notionHeaders(token: string) {
   }
 }
 
-export async function createEntry(input: { name: string; message: string }, env: NotionEnv): Promise<void> {
-  const { NOTION_TOKEN: token, NOTION_DATABASE_ID: databaseId } = env
+export async function createEntry(input: { name: string; message: string }): Promise<void> {
+  const { token, databaseId } = getConfig()
 
   const res = await fetch('https://api.notion.com/v1/pages', {
     method: 'POST',
@@ -34,13 +38,13 @@ export async function createEntry(input: { name: string; message: string }, env:
   })
 
   if (!res.ok) {
-    const body = (await res.json().catch(() => ({}))) as { message?: string }
+    const body = await res.json().catch(() => ({}))
     throw new Error(`Notion API 오류 (${res.status}): ${body.message ?? '알 수 없는 오류'}`)
   }
 }
 
-export async function listEntries(env: NotionEnv): Promise<GuestbookEntry[]> {
-  const { NOTION_TOKEN: token, NOTION_DATABASE_ID: databaseId } = env
+export async function listEntries(): Promise<GuestbookEntry[]> {
+  const { token, databaseId } = getConfig()
 
   const res = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
     method: 'POST',
@@ -51,11 +55,11 @@ export async function listEntries(env: NotionEnv): Promise<GuestbookEntry[]> {
   })
 
   if (!res.ok) {
-    const body = (await res.json().catch(() => ({}))) as { message?: string }
+    const body = await res.json().catch(() => ({}))
     throw new Error(`Notion API 오류 (${res.status}): ${body.message ?? '알 수 없는 오류'}`)
   }
 
-  const data = (await res.json()) as { results: any[] }
+  const data = await res.json()
 
   return data.results.map((page: any) => ({
     id: page.id,
