@@ -1,11 +1,6 @@
-import { useState } from 'react'
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
 import { DUMMY_HERO_IMAGE } from '../../constants/dummyImages'
-
-interface IntroProps {
-  onEnter: () => void
-}
 
 const fadeInPhoto = keyframes`
   from { opacity: 0; transform: scale(1.08); }
@@ -15,11 +10,6 @@ const fadeInPhoto = keyframes`
 const fadeInText = keyframes`
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
-`
-
-const pulse = keyframes`
-  0%, 100% { opacity: 0.85; }
-  50% { opacity: 0.4; }
 `
 
 const Wrapper = styled.section`
@@ -32,7 +22,6 @@ const Wrapper = styled.section`
   gap: ${({ theme }) => theme.spacing(2)};
   color: #fff;
   text-align: center;
-  cursor: pointer;
   overflow: hidden;
 `
 
@@ -71,33 +60,14 @@ const Date = styled.p`
   font-size: 1rem;
 `
 
-const Hint = styled.p`
-  position: absolute;
-  bottom: 40px;
-  z-index: 1;
-  font-size: 0.85rem;
-  animation: ${pulse} 2s ease-in-out infinite;
-`
-
-export function Intro({ onEnter }: IntroProps) {
-  const [entered, setEntered] = useState(false)
-
-  const handleEnter = () => {
-    if (!entered) {
-      setEntered(true)
-      onEnter()
-    }
-    document.getElementById('content-start')?.scrollIntoView({ behavior: 'smooth' })
-  }
-
+export function Intro() {
   return (
-    <Wrapper onClick={handleEnter} role="button" aria-label="청첩장 시작하기">
+    <Wrapper>
       <Photo />
       <Content>
         <Names>민수 ・ 수현</Names>
         <Date>2026. 11. 01 SUN</Date>
       </Content>
-      {!entered && <Hint>화면을 터치해주세요</Hint>}
     </Wrapper>
   )
 }

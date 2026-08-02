@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from '@emotion/react'
 import { theme } from './theme/theme'
 import { BGM_SRC } from './constants/weddingInfo'
@@ -16,19 +16,23 @@ function App() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(false)
 
-  const playMusic = () => {
+  useEffect(() => {
+    // 모바일 브라우저 자동재생 정책상 실패할 수 있음 — 실패 시 우측 상단 버튼으로 수동 재생
     audioRef.current
       ?.play()
       .then(() => setPlaying(true))
       .catch(() => {})
-  }
+  }, [])
 
   const toggleMusic = () => {
     if (playing) {
       audioRef.current?.pause()
       setPlaying(false)
     } else {
-      playMusic()
+      audioRef.current
+        ?.play()
+        .then(() => setPlaying(true))
+        .catch(() => {})
     }
   }
 
@@ -36,16 +40,14 @@ function App() {
     <ThemeProvider theme={theme}>
       <audio ref={audioRef} src={BGM_SRC} loop />
       <MusicPlayer playing={playing} onToggle={toggleMusic} />
-      <Intro onEnter={playMusic} />
-      <div id="content-start">
-        <Greeting />
-        <Ceremony />
-        <Gallery />
-        <PhotoUpload />
-        <Contacts />
-        <LocationMap />
-        <Guestbook />
-      </div>
+      <Intro />
+      <Greeting />
+      <Ceremony />
+      <Gallery />
+      <PhotoUpload />
+      <Contacts />
+      <LocationMap />
+      <Guestbook />
     </ThemeProvider>
   )
 }
