@@ -18,7 +18,7 @@
 
 ## 4. 사진 / 배경음악
 - [ ] 실제 웨딩 사진이 정해지면 `src/constants/dummyImages.ts`의 배열을 실제 이미지 경로로 교체
-- [ ] 인트로(시작 장면) 사진: `src/assets/` 에 파일을 넣고 `src/constants/dummyImages.ts`의 `DUMMY_HERO_IMAGE`를 교체 (전달해주신 이미지는 대화창 첨부라 파일로 직접 저장이 안 되어 있음 — Desktop/Downloads 등에 저장 후 경로를 알려주시면 반영해드릴게요)
+- [x] 인트로(시작 장면) 사진 적용 완료 (`src/assets/hero-intro.jpeg`, 웹용으로 리사이즈/압축함)
 - [ ] `/Users/jaewi/Downloads/walk2.mp4`가 저작권 문제 없는 음원인지 확인
 - [ ] `ffmpeg -i walk2.mp4 -vn -acodec libmp3lame -q:a 2 public/bgm.mp3` 명령으로 오디오 추출해 `public/bgm.mp3`로 저장
 
