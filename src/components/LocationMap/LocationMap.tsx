@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
 import { VENUE, NAVER_MAP_CLIENT_ID } from '../../constants/weddingInfo'
+import { loadNaverMaps } from './naverMapLoader'
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)};
@@ -12,16 +14,22 @@ const Title = styled.h2`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `
 
-const MapPlaceholder = styled.div`
+const MapBox = styled.div`
   width: 100%;
   aspect-ratio: 4 / 3;
   background: ${({ theme }) => theme.color.border};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  overflow: hidden;
+`
+
+const MapPlaceholder = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.color.textMuted};
   font-size: 0.85rem;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `
 
 const Address = styled.p`
@@ -71,14 +79,45 @@ const NAV_LINKS = [
 ]
 
 export function LocationMap() {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const [mapError, setMapError] = useState(false)
+
+  useEffect(() => {
+    if (!NAVER_MAP_CLIENT_ID || !mapRef.current) return
+
+    let cancelled = false
+
+    loadNaverMaps(NAVER_MAP_CLIENT_ID)
+      .then((naver) => {
+        if (cancelled || !mapRef.current) return
+        const position = new naver.maps.LatLng(VENUE.lat, VENUE.lng)
+        const map = new naver.maps.Map(mapRef.current, {
+          center: position,
+          zoom: 16,
+        })
+        new naver.maps.Marker({ position, map })
+      })
+      .catch(() => {
+        if (!cancelled) setMapError(true)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <Section>
       <Title>오시는 길</Title>
-      {NAVER_MAP_CLIENT_ID ? (
-        <MapPlaceholder>네이버 지도 (API 키 연동 필요)</MapPlaceholder>
-      ) : (
-        <MapPlaceholder>지도 준비 중 (네이버 지도 API 키 발급 필요, TODO.md 참고)</MapPlaceholder>
-      )}
+      <MapBox>
+        {NAVER_MAP_CLIENT_ID && !mapError ? (
+          <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
+        ) : (
+          <MapPlaceholder>
+            {mapError ? '지도를 불러오지 못했습니다' : '지도 준비 중 (네이버 지도 API 키 발급 필요, TODO.md 참고)'}
+          </MapPlaceholder>
+        )}
+      </MapBox>
       <Address>{VENUE.name}</Address>
       <NavButtonRow>
         {NAV_LINKS.map((nav) => (

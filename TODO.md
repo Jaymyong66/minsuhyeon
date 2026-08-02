@@ -12,9 +12,9 @@
 - [ ] 생성된 폼 URL을 `src/constants/weddingInfo.ts`의 `PHOTO_UPLOAD_FORM_URL`에 붙여넣기
 
 ## 3. 지도 (네이버 지도)
-- [ ] [네이버 클라우드 플랫폼(NCP)](https://www.ncloud.com/)에서 Maps API 키 발급
-- [ ] 서비스 도메인에 `www.minsuhyeon.life`와 로컬 개발용 `localhost` 등록
-- [ ] 발급받은 키를 `src/constants/weddingInfo.ts`의 `NAVER_MAP_CLIENT_ID`에 입력 (키 입력 전까지는 placeholder로 표시됨)
+- [x] NCP Maps API 키(Dynamic Map) 발급 완료, `NAVER_MAP_CLIENT_ID`에 반영함
+- [ ] NCP 콘솔 → 해당 애플리케이션 → 서비스 URL에 `https://www.minsuhyeon.life`와 로컬 개발용 `http://localhost:5173` 등록 확인 (등록 안 하면 지도가 401 에러로 안 뜸)
+- [x] 지도 렌더링 코드 구현 완료 (`LocationMap.tsx` + `naverMapLoader.ts`), 서울올림픽파크텔 위치에 마커 표시
 
 ## 4. 사진 / 배경음악
 - [x] 배경음악 연결 완료 (`Work2.mp4`에서 afconvert로 오디오 추출 → `public/bgm.m4a`, 첫 상호작용 시 자동재생)

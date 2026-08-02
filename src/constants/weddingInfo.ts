@@ -37,7 +37,6 @@ export const BRIDE_CONTACTS: ContactPerson[] = [
 // TODO: 네이버 폼 생성 후 실제 URL로 교체 (TODO.md 참고)
 export const PHOTO_UPLOAD_FORM_URL = 'https://form.naver.com/REPLACE_ME'
 
-// TODO: NCP Maps API 키 발급 전까지 placeholder. TODO.md 참고
-export const NAVER_MAP_CLIENT_ID = ''
+export const NAVER_MAP_CLIENT_ID = 'uqzmpj3t4s'
 
 export const BGM_SRC = '/bgm.m4a'
