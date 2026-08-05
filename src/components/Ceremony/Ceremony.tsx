@@ -11,12 +11,27 @@ const Section = styled.section`
 const Title = styled.h2`
   font-family: ${({ theme }) => theme.font.serif};
   font-size: 1.3rem;
+  color: ${({ theme }) => theme.color.accent};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `
 
-const Info = styled.p`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+const DateTime = styled.p`
+  margin: 0;
+  font-size: 1rem;
   color: ${({ theme }) => theme.color.text};
+`
+
+const Place = styled.p`
+  margin: 0 0 ${({ theme }) => theme.spacing(4)};
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.color.textMuted};
+`
+
+const MonthLabel = styled.p`
+  font-family: ${({ theme }) => theme.font.serif};
+  font-size: 1.1rem;
+  color: ${({ theme }) => theme.color.text};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `
 
 const CountdownWrapper = styled.div`
@@ -27,11 +42,9 @@ export function Ceremony() {
   return (
     <Section>
       <Title>예식 안내</Title>
-      <Info>
-        2026년 11월 1일 일요일 오후 1시
-        <br />
-        {VENUE.name}
-      </Info>
+      <DateTime>2026년 11월 1일 일요일 오후 1시</DateTime>
+      <Place>{VENUE.name}</Place>
+      <MonthLabel>11월</MonthLabel>
       <Calendar year={2026} month={11} targetDate={1} />
       <CountdownWrapper>
         <Countdown />

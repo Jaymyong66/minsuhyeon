@@ -39,6 +39,20 @@ const Photo = styled.div`
   }
 `
 
+const Headline = styled.p`
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  font-family: ${({ theme }) => theme.font.script};
+  font-size: 2.1rem;
+  line-height: 1.3;
+  color: ${({ theme }) => theme.color.accent};
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  animation: ${fadeInText} 1.2s ease-out 0.3s both;
+`
+
 const Content = styled.div`
   position: relative;
   z-index: 1;
@@ -64,6 +78,7 @@ export function Intro() {
   return (
     <Wrapper>
       <Photo />
+      <Headline>We&apos;re getting Married!</Headline>
       <Content>
         <Names>민수 ・ 수현</Names>
         <Date>2026. 11. 01 SUN</Date>
