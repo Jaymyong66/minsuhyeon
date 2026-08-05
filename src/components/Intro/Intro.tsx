@@ -12,6 +12,12 @@ const fadeInText = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `
 
+const writeIn = keyframes`
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  5% { opacity: 1; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+`
+
 const Wrapper = styled.section`
   position: relative;
   min-height: 100dvh;
@@ -43,14 +49,16 @@ const Headline = styled.p`
   position: absolute;
   top: 14%;
   left: 50%;
+  width: 90%;
   transform: translateX(-50%);
   z-index: 1;
+  text-align: center;
   font-family: ${({ theme }) => theme.font.script};
   font-size: 2.1rem;
   line-height: 1.3;
   color: ${({ theme }) => theme.color.accent};
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-  animation: ${fadeInText} 1.2s ease-out 0.3s both;
+  animation: ${writeIn} 1.8s ease-out 0.4s both;
 `
 
 const Content = styled.div`
