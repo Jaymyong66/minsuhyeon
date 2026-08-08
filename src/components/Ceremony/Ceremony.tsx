@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Reveal } from '../common/Reveal'
 import { Calendar } from './CalendarWidget'
 import { Countdown } from './CountdownTimer'
 import { VENUE } from '../../constants/weddingInfo'
@@ -41,14 +42,22 @@ const CountdownWrapper = styled.div`
 export function Ceremony() {
   return (
     <Section>
-      <Title>예식 안내</Title>
-      <DateTime>2026년 11월 1일 일요일 오후 1시</DateTime>
-      <Place>{VENUE.name}</Place>
-      <MonthLabel>11월</MonthLabel>
-      <Calendar year={2026} month={11} targetDate={1} />
-      <CountdownWrapper>
-        <Countdown />
-      </CountdownWrapper>
+      <Reveal>
+        <Title>예식 안내</Title>
+      </Reveal>
+      <Reveal delay={120}>
+        <DateTime>2026년 11월 1일 일요일 오후 1시</DateTime>
+        <Place>{VENUE.name}</Place>
+      </Reveal>
+      <Reveal delay={240}>
+        <MonthLabel>11월</MonthLabel>
+        <Calendar year={2026} month={11} targetDate={1} />
+      </Reveal>
+      <Reveal delay={360}>
+        <CountdownWrapper>
+          <Countdown />
+        </CountdownWrapper>
+      </Reveal>
     </Section>
   )
 }

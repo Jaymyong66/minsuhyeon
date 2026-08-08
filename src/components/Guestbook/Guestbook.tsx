@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import styled from '@emotion/styled'
+import { Reveal } from '../common/Reveal'
 
 interface Entry {
   id: string
@@ -113,32 +114,38 @@ export function Guestbook() {
 
   return (
     <Section>
-      <Title>축하 메시지</Title>
-      <Form onSubmit={handleSubmit}>
-        <Input
-          placeholder="이름"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={50}
-          required
-        />
-        <Textarea
-          placeholder="축하 메시지를 남겨주세요"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          maxLength={300}
-          required
-        />
-        {error && <span role="alert">{error}</span>}
-        <SubmitButton type="submit" disabled={submitting}>
-          {submitting ? '등록 중...' : '남기기'}
-        </SubmitButton>
-      </Form>
+      <Reveal>
+        <Title>축하 메시지</Title>
+      </Reveal>
+      <Reveal delay={120}>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            placeholder="이름"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={50}
+            required
+          />
+          <Textarea
+            placeholder="축하 메시지를 남겨주세요"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            maxLength={300}
+            required
+          />
+          {error && <span role="alert">{error}</span>}
+          <SubmitButton type="submit" disabled={submitting}>
+            {submitting ? '등록 중...' : '남기기'}
+          </SubmitButton>
+        </Form>
+      </Reveal>
       {entries.map((entry) => (
-        <EntryCard key={entry.id}>
-          <EntryName>{entry.name}</EntryName>
-          <EntryMessage>{entry.message}</EntryMessage>
-        </EntryCard>
+        <Reveal key={entry.id}>
+          <EntryCard>
+            <EntryName>{entry.name}</EntryName>
+            <EntryMessage>{entry.message}</EntryMessage>
+          </EntryCard>
+        </Reveal>
       ))}
     </Section>
   )

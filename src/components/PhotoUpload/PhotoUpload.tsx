@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Reveal } from '../common/Reveal'
 import { PHOTO_UPLOAD_FORM_URL } from '../../constants/weddingInfo'
 
 const Section = styled.section`
@@ -31,11 +32,17 @@ const Button = styled.a`
 export function PhotoUpload() {
   return (
     <Section>
-      <Title>사진 업로드</Title>
-      <Description>결혼식에서 찍은 소중한 사진을 보내주세요</Description>
-      <Button href={PHOTO_UPLOAD_FORM_URL} target="_blank" rel="noreferrer">
-        사진 보내기
-      </Button>
+      <Reveal>
+        <Title>사진 업로드</Title>
+      </Reveal>
+      <Reveal delay={120}>
+        <Description>결혼식에서 찍은 소중한 사진을 보내주세요</Description>
+      </Reveal>
+      <Reveal delay={240}>
+        <Button href={PHOTO_UPLOAD_FORM_URL} target="_blank" rel="noreferrer">
+          사진 보내기
+        </Button>
+      </Reveal>
     </Section>
   )
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
+import { Reveal } from '../common/Reveal'
 import { VENUE, NAVER_MAP_CLIENT_ID } from '../../constants/weddingInfo'
 import { loadNaverMaps } from './naverMapLoader'
 
@@ -109,7 +110,9 @@ export function LocationMap() {
 
   return (
     <Section>
-      <Title>오시는 길</Title>
+      <Reveal>
+        <Title>오시는 길</Title>
+      </Reveal>
       <MapBox>
         {NAVER_MAP_CLIENT_ID && !mapError ? (
           <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
@@ -119,17 +122,23 @@ export function LocationMap() {
           </MapPlaceholder>
         )}
       </MapBox>
-      <Address>{VENUE.name}</Address>
-      <NavButtonRow>
-        {NAV_LINKS.map((nav) => (
-          <NavButton key={nav.label} href={nav.href}>
-            {nav.label}
-          </NavButton>
-        ))}
-      </NavButtonRow>
-      <Button href={VENUE.directionsUrl} target="_blank" rel="noreferrer">
-        오시는 길 / 주차 안내
-      </Button>
+      <Reveal delay={120}>
+        <Address>{VENUE.name}</Address>
+      </Reveal>
+      <Reveal delay={220}>
+        <NavButtonRow>
+          {NAV_LINKS.map((nav) => (
+            <NavButton key={nav.label} href={nav.href}>
+              {nav.label}
+            </NavButton>
+          ))}
+        </NavButtonRow>
+      </Reveal>
+      <Reveal delay={320}>
+        <Button href={VENUE.directionsUrl} target="_blank" rel="noreferrer">
+          오시는 길 / 주차 안내
+        </Button>
+      </Reveal>
     </Section>
   )
 }

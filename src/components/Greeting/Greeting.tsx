@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Reveal } from '../common/Reveal'
 import { GREETING_MESSAGE_PARAGRAPHS } from '../../constants/weddingInfo'
 
 const Section = styled.section`
@@ -20,7 +21,10 @@ const Paragraph = styled.p`
   line-height: 1.8;
   font-size: clamp(0.82rem, 3.6vw, 0.95rem);
   color: ${({ theme }) => theme.color.text};
+  margin: 0;
+`
 
+const ParagraphBlock = styled(Reveal)`
   & + & {
     margin-top: ${({ theme }) => theme.spacing(3)};
   }
@@ -29,9 +33,13 @@ const Paragraph = styled.p`
 export function Greeting() {
   return (
     <Section>
-      <Title>저희의 새로운 이야기에 함께해 주세요</Title>
-      {GREETING_MESSAGE_PARAGRAPHS.map((paragraph) => (
-        <Paragraph key={paragraph}>{paragraph}</Paragraph>
+      <Reveal>
+        <Title>저희의 새로운 이야기에 함께해 주세요</Title>
+      </Reveal>
+      {GREETING_MESSAGE_PARAGRAPHS.map((paragraph, i) => (
+        <ParagraphBlock key={paragraph} delay={120 + i * 120}>
+          <Paragraph>{paragraph}</Paragraph>
+        </ParagraphBlock>
       ))}
     </Section>
   )

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import styled from '@emotion/styled'
+import { Reveal } from '../common/Reveal'
 import { CopyButton } from '../common/CopyButton'
 import { formatAccountForCopy } from '../common/formatAccount'
 import { GROOM_CONTACTS, BRIDE_CONTACTS, type ContactPerson } from '../../constants/weddingInfo'
@@ -16,12 +17,10 @@ const Title = styled.h2`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `
 
-const SideGroup = styled.div`
+/* 각 그룹이 Reveal 로 감싸져 형제가 아니게 되므로 :last-of-type 대신 명시적 플래그를 쓴다. */
+const SideGroup = styled.div<{ last?: boolean }>`
   border-top: 1px solid ${({ theme }) => theme.color.border};
-
-  &:last-of-type {
-    border-bottom: 1px solid ${({ theme }) => theme.color.border};
-  }
+  border-bottom: ${({ last, theme }) => (last ? `1px solid ${theme.color.border}` : 'none')};
 `
 
 const SideHeader = styled.button`
@@ -88,11 +87,19 @@ function ContactList({ people }: { people: ContactPerson[] }) {
   )
 }
 
-function AccordionSide({ label, people }: { label: string; people: ContactPerson[] }) {
+function AccordionSide({
+  label,
+  people,
+  last,
+}: {
+  label: string
+  people: ContactPerson[]
+  last?: boolean
+}) {
   const [open, setOpen] = useState(false)
 
   return (
-    <SideGroup>
+    <SideGroup last={last}>
       <SideHeader type="button" onClick={() => setOpen((prev) => !prev)} aria-expanded={open}>
         {label}
         <Chevron open={open} aria-hidden="true">
@@ -111,9 +118,15 @@ function AccordionSide({ label, people }: { label: string; people: ContactPerson
 export function Contacts() {
   return (
     <Section>
-      <Title>마음 전하실 곳</Title>
-      <AccordionSide label="신랑측" people={GROOM_CONTACTS} />
-      <AccordionSide label="신부측" people={BRIDE_CONTACTS} />
+      <Reveal>
+        <Title>마음 전하실 곳</Title>
+      </Reveal>
+      <Reveal delay={120}>
+        <AccordionSide label="신랑측" people={GROOM_CONTACTS} />
+      </Reveal>
+      <Reveal delay={220}>
+        <AccordionSide label="신부측" people={BRIDE_CONTACTS} last />
+      </Reveal>
     </Section>
   )
 }

@@ -12,7 +12,6 @@ import { LocationMap } from './components/LocationMap/LocationMap'
 import { Guestbook } from './components/Guestbook/Guestbook'
 import { MusicPlayer } from './components/common/MusicPlayer'
 import { MusicBanner } from './components/common/MusicBanner'
-import { Reveal } from './components/common/Reveal'
 
 const GESTURE_EVENTS = ['touchstart', 'click', 'scroll', 'keydown'] as const
 
@@ -62,27 +61,13 @@ function App() {
       <MusicBanner />
       <MusicPlayer playing={playing} onToggle={toggleMusic} />
       <Intro />
-      <Reveal>
-        <Greeting />
-      </Reveal>
-      <Reveal>
-        <Ceremony />
-      </Reveal>
-      <Reveal>
-        <Gallery />
-      </Reveal>
-      <Reveal>
-        <Contacts />
-      </Reveal>
-      <Reveal>
-        <LocationMap />
-      </Reveal>
-      <Reveal>
-        <PhotoUpload />
-      </Reveal>
-      <Reveal>
-        <Guestbook />
-      </Reveal>
+      <Greeting />
+      <Ceremony />
+      <Gallery />
+      <Contacts />
+      <LocationMap />
+      <PhotoUpload />
+      <Guestbook />
     </ThemeProvider>
   )
 }
