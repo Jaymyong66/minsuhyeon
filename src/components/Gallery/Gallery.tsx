@@ -77,16 +77,33 @@ const CloseButton = styled(IconButton)`
   right: 16px;
 `
 
-const PrevButton = styled(IconButton)`
-  left: 8px;
+/* 이동 버튼은 사진을 넘기며 반복해서 누르는 곳이라 넉넉하게 잡는다.
+   보이는 원 바깥으로 10px 더 눌리는 영역을 둬서 빗나가도 먹히게 한다. */
+const NavButton = styled(IconButton)`
+  width: 56px;
+  height: 56px;
+  font-size: 2rem;
   top: 50%;
   transform: translateY(-50%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: inherit;
+  }
+
+  &:active:not(:disabled) {
+    background: rgba(0, 0, 0, 0.6);
+  }
 `
 
-const NextButton = styled(IconButton)`
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+const PrevButton = styled(NavButton)`
+  left: max(20px, env(safe-area-inset-left));
+`
+
+const NextButton = styled(NavButton)`
+  right: max(20px, env(safe-area-inset-right));
 `
 
 const Counter = styled.div`
