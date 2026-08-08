@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
 import { Reveal } from '../common/Reveal'
-import { DUMMY_GALLERY_IMAGES } from '../../constants/dummyImages'
+import { GALLERY_PHOTOS } from '../../constants/dummyImages'
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)};
@@ -131,7 +131,7 @@ function Lightbox({
   return createPortal(
     <Overlay role="dialog" aria-modal="true" aria-label="사진 크게 보기" onClick={onClose}>
       <FullPhoto
-        src={DUMMY_GALLERY_IMAGES[index]}
+        src={GALLERY_PHOTOS[index].full}
         alt={`갤러리 사진 ${index + 1}`}
         onClick={(e) => e.stopPropagation()}
         onDoubleClick={(e) => e.preventDefault()}
@@ -160,7 +160,7 @@ function Lightbox({
       <NextButton
         type="button"
         aria-label="다음 사진"
-        disabled={index === DUMMY_GALLERY_IMAGES.length - 1}
+        disabled={index === GALLERY_PHOTOS.length - 1}
         onClick={(e) => {
           e.stopPropagation()
           onNext()
@@ -169,7 +169,7 @@ function Lightbox({
         ›
       </NextButton>
       <Counter>
-        {index + 1} / {DUMMY_GALLERY_IMAGES.length}
+        {index + 1} / {GALLERY_PHOTOS.length}
       </Counter>
     </Overlay>,
     document.body,
@@ -185,7 +185,7 @@ export function Gallery() {
     [],
   )
   const next = useCallback(
-    () => setOpenIndex((i) => (i === null ? i : Math.min(DUMMY_GALLERY_IMAGES.length - 1, i + 1))),
+    () => setOpenIndex((i) => (i === null ? i : Math.min(GALLERY_PHOTOS.length - 1, i + 1))),
     [],
   )
 
@@ -195,12 +195,12 @@ export function Gallery() {
         <Title>갤러리</Title>
       </Reveal>
       <Grid>
-        {DUMMY_GALLERY_IMAGES.map((src, i) => (
+        {GALLERY_PHOTOS.map((photo, i) => (
           /* 행 안에서 좌→우로 번지도록 열 위치만큼만 지연시킨다.
              관찰자가 사진마다 따로 붙으므로 뒤쪽 사진까지 지연이 누적되지 않는다. */
-          <Reveal key={src} delay={(i % 3) * 80}>
+          <Reveal key={photo.thumb} delay={(i % 3) * 80}>
             <Photo
-              src={src}
+              src={photo.thumb}
               alt={`갤러리 사진 ${i + 1}`}
               loading="lazy"
               onClick={() => setOpenIndex(i)}
