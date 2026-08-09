@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import styled from '@emotion/styled'
 import { Reveal } from '../common/Reveal'
+import { formatEntryDate } from './formatEntryDate'
 
 interface Entry {
   id: string
@@ -56,9 +57,23 @@ const EntryCard = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.color.border};
 `
 
+const EntryHeader = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.spacing(1)};
+`
+
 const EntryName = styled.div`
   font-weight: 600;
   font-size: 0.9rem;
+`
+
+const EntryDate = styled.time`
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.color.textMuted};
+  font-variant-numeric: tabular-nums;
 `
 
 const EntryMessage = styled.div`
@@ -142,7 +157,10 @@ export function Guestbook() {
       {entries.map((entry) => (
         <Reveal key={entry.id}>
           <EntryCard>
-            <EntryName>{entry.name}</EntryName>
+            <EntryHeader>
+              <EntryName>{entry.name}</EntryName>
+              <EntryDate dateTime={entry.createdAt}>{formatEntryDate(entry.createdAt)}</EntryDate>
+            </EntryHeader>
             <EntryMessage>{entry.message}</EntryMessage>
           </EntryCard>
         </Reveal>
