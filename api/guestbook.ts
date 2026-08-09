@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { validateGuestbookEntry } from './guestbook.validation'
-import { createEntry, listEntries } from './guestbook.notion'
+// 공유 모듈은 api/ 밖에 둔다.
+// Vercel 은 api/ 안의 모든 파일을 서버리스 함수로 만들기 때문에,
+// 여기 두면 default export 도 없는 모듈들이 공개 엔드포인트가 되어 500 을 뱉는다.
+import { validateGuestbookEntry } from '../lib/guestbook.validation'
+import { createEntry, listEntries } from '../lib/guestbook.notion'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
