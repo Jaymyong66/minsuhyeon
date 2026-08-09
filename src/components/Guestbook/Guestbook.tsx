@@ -19,7 +19,17 @@ const Title = styled.h2`
   font-size: 1.3rem;
   color: ${({ theme }) => theme.color.accent};
   text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+`
+
+/* 사이트에 삭제·수정 기능을 두지 않으므로, 필요한 하객은 직접 연락하도록 안내한다 */
+const Description = styled.p`
+  margin: 0 0 ${({ theme }) => theme.spacing(3)};
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  word-break: keep-all;
+  color: ${({ theme }) => theme.color.textMuted};
 `
 
 const Form = styled.form`
@@ -131,6 +141,7 @@ export function Guestbook() {
     <Section>
       <Reveal>
         <Title>축하 메시지</Title>
+        <Description>메시지 수정 혹은 문제가 발생하면 직접 연락 부탁드려요 🙏</Description>
       </Reveal>
       <Reveal delay={120}>
         <Form onSubmit={handleSubmit}>

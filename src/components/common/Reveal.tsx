@@ -44,7 +44,15 @@ export function Reveal({ children, delay = 0, className }: RevealProps) {
           observer.unobserve(el)
         }
       },
-      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' },
+      /*
+       * rootMargin 으로 뷰포트 아래를 깎지 않는다.
+       * 깎으면 그 구간에 들어간 요소는 영영 나타나지 않는데, 페이지 맨 끝
+       * 콘텐츠(방명록 마지막 글)는 더 스크롤할 수가 없어 그 구간을 벗어날 방법이 없다.
+       *
+       * threshold 도 0 으로 둔다. 0 보다 크면 뷰포트보다 큰 요소가
+       * 그 비율만큼 보일 수 없어 역시 영영 나타나지 않는다.
+       */
+      { threshold: 0, rootMargin: '0px' },
     )
     observer.observe(el)
 
