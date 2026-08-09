@@ -36,7 +36,9 @@
 - [x] GitHub 저장소(`Jaymyong66/minsuhyeon`)에 push
 - [x] Vercel 프로젝트 연결 및 배포 — **`main`에 push하면 자동 배포됨**. 따로 할 일 없음
 - [x] Vercel 프로젝트 Settings → Domains에서 `www.minsuhyeon.life` 추가 (호스팅케이알 DNS의 `www` CNAME 레코드는 이미 Vercel 값으로 설정되어 있음 — Invalid Configuration이 계속되면 도메인을 삭제 후 재추가해 재검증 트리거)
-- [ ] Vercel Settings → Environment Variables에 `NOTION_TOKEN`, `NOTION_DATABASE_ID` 등록 ← **이것만 남음**. 안 하면 배포본 방명록만 500
+- [x] Vercel Settings → Environment Variables에 `NOTION_TOKEN`, `NOTION_DATABASE_ID` 등록
+- [x] 프로덕션 방명록 동작 확인 — 조회 200, 빈 입력 400, DELETE 405, 불필요 엔드포인트 404
+- **`"type": "module"` 주의**: `api/`의 상대 경로 import에는 반드시 `.js` 확장자를 붙일 것. Node 네이티브 ESM은 확장자를 요구해서, 없으면 모듈 로드 단계에서 `ERR_MODULE_NOT_FOUND`로 죽고 핸들러의 try/catch가 잡지 못해 `FUNCTION_INVOCATION_FAILED`로만 보인다. `vite-node`는 번들러 규칙이라 로컬에서는 통과하므로 로컬 테스트로 걸러지지 않는다
 - **`api/` 에는 실제 엔드포인트 파일만 둘 것**: Vercel은 `api/` 안의 모든 파일을 서버리스 함수로 만든다. 공유 모듈이나 테스트 파일을 여기 두면 default export가 없어서 각각 500을 뱉는 공개 엔드포인트가 된다. 그래서 공유 코드는 `lib/`에 둔다
 - **`api/`는 타입체크 대상이 아님**: `tsconfig.app.json`이 `src`만 포함해서 `npm run build`가 `api/`의 오류를 잡지 못한다. 이쪽을 고칠 때는 `npx vite-node`로 직접 실행해 확인할 것
 
