@@ -53,13 +53,28 @@ const Textarea = styled.textarea`
   min-height: 80px;
 `
 
-const SubmitButton = styled.button`
+/* 이름과 메시지가 모두 채워지면 진해져서 이제 누르면 된다는 걸 알린다 */
+const SubmitButton = styled.button<{ ready: boolean }>`
   padding: ${({ theme }) => theme.spacing(1.5)};
   border: none;
   border-radius: 8px;
-  background: ${({ theme }) => theme.color.accent};
-  color: #fff;
+  background: ${({ ready, theme }) => (ready ? theme.color.accentStrong : theme.color.accent)};
+  color: ${({ ready, theme }) => (ready ? '#fff' : theme.color.onAccent)};
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `
 
 const EntryCard = styled.div`
@@ -113,6 +128,8 @@ export function Guestbook() {
     loadEntries()
   }, [])
 
+  const ready = name.trim().length > 0 && message.trim().length > 0
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
@@ -160,7 +177,7 @@ export function Guestbook() {
             required
           />
           {error && <span role="alert">{error}</span>}
-          <SubmitButton type="submit" disabled={submitting}>
+          <SubmitButton type="submit" disabled={submitting} ready={ready}>
             {submitting ? '등록 중...' : '남기기'}
           </SubmitButton>
         </Form>
