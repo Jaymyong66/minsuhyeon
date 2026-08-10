@@ -2,10 +2,12 @@ import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
 import { DUMMY_HERO_IMAGE } from '../../constants/dummyImages'
 import {
-  HANDWRITING_VIEWBOX,
   HANDWRITING_LETTERFORM_D,
   HANDWRITING_STROKES,
   HANDWRITING_TOTAL_LENGTH,
+  HANDWRITING_LINE_BREAK,
+  HANDWRITING_TWO_LINE_VIEWBOX,
+  HANDWRITING_LINE_TRANSFORMS,
 } from './handwritingPath'
 
 /*
@@ -30,7 +32,24 @@ const MASK_WIDTH = 14
    마지막 획이 다 쓰이기 전에 시작하면 끝글자가 미리 나타나 버린다. */
 const SETTLE_AT = DRAW_DELAY + DRAW_DURATION
 
-const [VB_X, VB_Y, VB_W, VB_H] = HANDWRITING_VIEWBOX.split(/\s+/).map(Number)
+const [VB_X, VB_Y, VB_W, VB_H] = HANDWRITING_TWO_LINE_VIEWBOX.split(/\s+/).map(Number)
+
+/* 줄별로 나눠 둔 외곽선과 획. 경계 앞이 첫 줄, 뒤가 둘째 줄이다. */
+const LETTERFORM_SUBPATHS = HANDWRITING_LETTERFORM_D.split(/(?=M)/).filter((d) => d.trim())
+const LINES = [
+  {
+    transform: HANDWRITING_LINE_TRANSFORMS[0],
+    d: LETTERFORM_SUBPATHS.slice(0, HANDWRITING_LINE_BREAK.subpath).join(''),
+    from: 0,
+    to: HANDWRITING_LINE_BREAK.stroke,
+  },
+  {
+    transform: HANDWRITING_LINE_TRANSFORMS[1],
+    d: LETTERFORM_SUBPATHS.slice(HANDWRITING_LINE_BREAK.subpath).join(''),
+    from: HANDWRITING_LINE_BREAK.stroke,
+    to: HANDWRITING_STROKES.length,
+  },
+]
 
 const fadeInPhoto = keyframes`
   from { opacity: 0; }
@@ -59,7 +78,7 @@ const handOn = keyframes`
  * 사진 안에서의 세로 비율이 그대로 화면 비율이 된다.
  *   남자 머리 꼭대기 42% / 재킷 밑단 68% / 신발 바닥 88.5%
  */
-const HEADLINE_BOTTOM = '40%' // 머리보다 살짝 위
+const HEADLINE_BOTTOM = 'calc(40% - 50px)' // 머리보다 살짝 위에서 50px 더 올림
 const NAMES_CENTER = '78%' // 두 사람의 다리 부근
 
 const Wrapper = styled.section`
@@ -177,7 +196,12 @@ export function Intro() {
     <Wrapper>
       <Photo />
       <HeadlineBox>
-        <svg viewBox={HANDWRITING_VIEWBOX} width="100%" role="img" aria-label="We're getting Married!">
+        <svg
+          viewBox={HANDWRITING_TWO_LINE_VIEWBOX}
+          width="100%"
+          role="img"
+          aria-label="We're getting Married!"
+        >
           <defs>
             <mask
               id="handwritingReveal"
@@ -187,15 +211,39 @@ export function Intro() {
               width={VB_W}
               height={VB_H}
             >
-              <MaskGroup>
-                {HANDWRITING_STROKES.map((stroke, i) => (
-                  <MaskStroke key={i} d={stroke.d} len={stroke.len} begin={STROKE_OFFSETS[i]} />
-                ))}
-              </MaskGroup>
+              {LINES.map((line) => (
+                <g key={line.from} transform={line.transform}>
+                  <MaskGroup>
+                    {HANDWRITING_STROKES.slice(line.from, line.to).map((stroke, i) => (
+                      <MaskStroke
+                        key={i}
+                        d={stroke.d}
+                        len={stroke.len}
+                        begin={STROKE_OFFSETS[line.from + i]}
+                      />
+                    ))}
+                  </MaskGroup>
+                </g>
+              ))}
             </mask>
           </defs>
-          <LetterformPath d={HANDWRITING_LETTERFORM_D} mask="url(#handwritingReveal)" />
-          <SettlePath d={HANDWRITING_LETTERFORM_D} />
+          {/*
+            마스크는 줄을 감싼 바깥 <g> 에 건다.
+            줄마다 걸면 mask 의 userSpaceOnUse 좌표가 그 줄의 transform 을 따라
+            같이 움직여서, 마스크와 글자가 서로 어긋난다.
+          */}
+          <g mask="url(#handwritingReveal)">
+            {LINES.map((line) => (
+              <g key={line.from} transform={line.transform}>
+                <LetterformPath d={line.d} />
+              </g>
+            ))}
+          </g>
+          {LINES.map((line) => (
+            <g key={line.from} transform={line.transform}>
+              <SettlePath d={line.d} />
+            </g>
+          ))}
         </svg>
       </HeadlineBox>
       <ContentAnchor>

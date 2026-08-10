@@ -35,7 +35,7 @@ const Circle = styled.div`
   background: ${({ theme }) => theme.color.accent};
   color: #fff;
   font-size: clamp(1.25rem, 5.5vw, 1.6rem);
-  font-weight: 600;
+  font-weight: 400;
   /* 숫자가 매초 바뀌어도 원 안에서 폭이 흔들리지 않게 */
   font-variant-numeric: tabular-nums;
   box-shadow: 0 2px 8px rgba(178, 90, 114, 0.18);

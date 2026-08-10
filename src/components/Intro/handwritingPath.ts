@@ -139,3 +139,29 @@ export const HANDWRITING_STROKES: HandwritingStroke[] = [
 
 /** 모든 획 길이의 합. 획별 재생 시점을 길이에 비례해 나눌 때 쓴다. */
 export const HANDWRITING_TOTAL_LENGTH = 2219
+
+/*
+ * 두 줄 배치 ("We're getting" / "Married!").
+ *
+ * 원본은 한 줄짜리 경로라, 줄을 나누려면 "Married!" 에 해당하는 조각만 골라
+ * 아래로 내려야 한다. 다행히 외곽선 subpath 도 획도 모두 왼쪽부터 차례로
+ * 들어 있어서, 경계 하나만 알면 앞뒤로 자르면 된다.
+ *
+ * 경계는 브라우저에서 조각마다 getBBox 를 재서 찾았다.
+ * "getting" 끝(x=501.7)과 "Married!" 시작(x=522.9) 사이가 가장 넓은 빈 곳이다.
+ * 아래 숫자들은 그때 함께 계산한 값이다(두 줄을 각각 가운데 정렬).
+ */
+export const HANDWRITING_LINE_BREAK = {
+  /** 이 인덱스부터 둘째 줄. 외곽선 subpath 기준 */
+  subpath: 18,
+  /** 이 인덱스부터 둘째 줄. HANDWRITING_STROKES 기준 */
+  stroke: 75,
+} as const
+
+export const HANDWRITING_TWO_LINE_VIEWBOX = '0 0 498.3 196.9'
+
+/** 각 줄을 제자리로 옮기는 변환. 위 viewBox 좌표계 기준 */
+export const HANDWRITING_LINE_TRANSFORMS = [
+  'translate(-9.4 -6)',
+  'translate(-445.05 98)',
+] as const
