@@ -13,9 +13,13 @@
 - **로컬 테스트는 `npm run dev`로 안 됨**: `api/`는 Vercel 서버리스 함수라 vite가 실행하지 않고 소스를 그대로 텍스트로 반환함. 방명록 조회 실패는 `Guestbook.tsx`에서 조용히 무시되어 화면상 티도 안 나니 주의. `vercel dev`를 쓰거나 `npx vite-node`로 `api/guestbook.notion.ts`를 직접 호출해 확인할 것
 - **삭제 정책**: 사이트에는 삭제 버튼을 두지 않음(하객이나 임의 사용자가 지울 수 있게 되는 걸 방지). 지워야 할 메시지가 생기면 Notion 데이터베이스에 접근 권한이 있는 개발자/혼주가 Notion에서 직접 해당 행을 삭제하면 됨
 
-## 2. 사진 업로드 (네이버 폼)
-- [ ] 네이버 폼에서 "파일첨부" 질문이 포함된 폼 생성
-- [ ] 생성된 폼 URL을 `src/constants/weddingInfo.ts`의 `PHOTO_UPLOAD_FORM_URL`에 붙여넣기
+## 2. 사진 업로드 (사이트에서 직접 → Notion)
+네이버 폼은 폐기함(로그인 필요 + 최대 5장). 사이트 모달에서 바로 올려 방명록과 같은 Notion DB에 쌓는다.
+- [x] `api/photos.ts` + `lib/guestbook.notion.ts`(file_uploads) 구현, `PhotoUpload` 모달 추가
+- [x] **사진은 사이트에 노출하지 않음** — `Message`가 빈 행은 `listEntries`에서 걸러낸다(회귀 테스트로 고정). 혼주만 노션에서 봄
+- [x] 한 번에 최대 20장, 3.5MB 초과/HEIC만 리사이즈(그 외는 원본 그대로 전송)
+- [ ] **실기기(특히 아이폰)에서 선택 → 전송까지 재확인** — 모바일 선택 불가 문제 수정 배포됨(`e0f4ba3`)
+- [ ] **노션에서 테스트 행 `🧪 사진테스트 (지워주세요)` 직접 삭제** — 토큰에 삭제 권한이 없어 내가 못 지움(사이트에는 안 보임)
 
 ## 3. 지도 (네이버 지도)
 - [x] NCP Maps API 키(Dynamic Map) 발급 완료, `NAVER_MAP_CLIENT_ID`에 반영함
