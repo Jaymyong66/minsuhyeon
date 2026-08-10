@@ -56,11 +56,6 @@ const fadeInPhoto = keyframes`
   to { opacity: 1; }
 `
 
-const fadeInText = keyframes`
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-`
-
 /* 길이는 획마다 달라서 CSS 변수로 받는다 */
 const draw = keyframes`
   from { stroke-dashoffset: var(--len); }
@@ -79,7 +74,6 @@ const handOn = keyframes`
  *   남자 머리 꼭대기 42% / 재킷 밑단 68% / 신발 바닥 88.5%
  */
 const HEADLINE_BOTTOM = 'calc(40% - 50px)' // 머리보다 살짝 위에서 50px 더 올림
-const NAMES_CENTER = '78%' // 두 사람의 다리 부근
 
 const Wrapper = styled.section`
   position: relative;
@@ -156,41 +150,6 @@ const STROKE_OFFSETS = HANDWRITING_STROKES.reduce<number[]>((acc, _, i) => {
   return acc
 }, [])
 
-/* 위치잡기와 애니메이션을 다른 요소로 나눈다.
-   한 요소에 두면 keyframes 의 transform 이 자리잡는 transform 을 덮어써 버린다. */
-const ContentAnchor = styled.div`
-  position: absolute;
-  top: ${NAMES_CENTER};
-  left: 0;
-  right: 0;
-  z-index: 1;
-  transform: translateY(-50%);
-`
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  animation: ${fadeInText} 1.2s ease-out 0.6s both;
-`
-
-/* 흰 드레스 위에 흰 글씨가 얹히므로 그림자로 대비를 확보한다 */
-const Names = styled.h1`
-  margin: 0;
-  font-family: ${({ theme }) => theme.font.serif};
-  font-size: 2rem;
-  letter-spacing: 0.1em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
-`
-
-const Date = styled.p`
-  margin: 0;
-  font-family: ${({ theme }) => theme.font.serif};
-  font-size: 1rem;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
-`
-
 export function Intro() {
   return (
     <Wrapper>
@@ -246,12 +205,6 @@ export function Intro() {
           ))}
         </svg>
       </HeadlineBox>
-      <ContentAnchor>
-        <Content>
-          <Names>민수 ・ 수현</Names>
-          <Date>2026. 11. 01 SUN</Date>
-        </Content>
-      </ContentAnchor>
     </Wrapper>
   )
 }
