@@ -2,7 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
 import { Reveal } from '../common/Reveal'
-import { uploadPhoto, MAX_PHOTOS, type PhotoItem } from './uploadPhotos'
+import {
+  uploadPhoto,
+  overallProgress,
+  toPercent,
+  totalBytes,
+  formatBytes,
+  MAX_PHOTOS,
+  type PhotoItem,
+} from './uploadPhotos'
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)};
@@ -111,9 +119,18 @@ const FileRow = styled.li`
 `
 
 const FileName = styled.span`
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`
+
+const FileSize = styled.span`
+  flex-shrink: 0;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
 `
 
 const FileState = styled.span<{ tone: 'muted' | 'done' | 'error' }>`
@@ -175,6 +192,122 @@ const HiddenFileInput = styled.input`
   pointer-events: none;
 `
 
+const ProgressWrap = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`
+
+const ProgressHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: ${({ theme }) => theme.spacing(0.5)};
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.color.textMuted};
+`
+
+const ProgressPercent = styled.strong`
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  color: ${({ theme }) => theme.color.accentStrong};
+`
+
+const ProgressTrack = styled.div`
+  height: 6px;
+  border-radius: 999px;
+  background: ${({ theme }) => theme.color.border};
+  overflow: hidden;
+`
+
+const ProgressBar = styled.div<{ ratio: number }>`
+  height: 100%;
+  border-radius: inherit;
+  background: ${({ theme }) => theme.color.accentStrong};
+  transform-origin: left center;
+  transform: scaleX(${({ ratio }) => ratio});
+  transition: transform 0.2s linear;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`
+
+/* 다이얼로그 위에 한 겹 더 덮는다. 아래 내용이 비쳐 보이되 조작은 막힌다 */
+const DoneBackdrop = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(2)};
+  animation: fadeIn 0.25s ease-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`
+
+const DoneCard = styled.div`
+  width: 100%;
+  max-width: 320px;
+  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  border-radius: 16px;
+  background: ${({ theme }) => theme.color.surface};
+  text-align: center;
+`
+
+const DoneTitle = styled.p`
+  margin: 0;
+  font-family: ${({ theme }) => theme.font.serif};
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.color.text};
+  word-break: keep-all;
+`
+
+const DoneText = styled.p`
+  margin: ${({ theme }) => theme.spacing(1.5)} 0 0;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: ${({ theme }) => theme.color.textMuted};
+  word-break: keep-all;
+`
+
+const DoneActions = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
+`
+
+const DoneConfirm = styled.button`
+  flex: 1;
+  padding: ${({ theme }) => theme.spacing(1.5)};
+  border: none;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.color.accentStrong};
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+`
+
+const DoneMore = styled.button`
+  padding: ${({ theme }) => theme.spacing(1.5)} ${({ theme }) => theme.spacing(2)};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: 8px;
+  background: none;
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: 0.95rem;
+  cursor: pointer;
+`
+
 const Notice = styled.p`
   margin: ${({ theme }) => theme.spacing(1)} 0 0;
   font-size: 0.75rem;
@@ -193,7 +326,7 @@ const Note = styled.p`
 
 const stateLabel = (item: PhotoItem) => {
   if (item.status === 'done') return '완료'
-  if (item.status === 'uploading') return '보내는 중'
+  if (item.status === 'uploading') return `${toPercent(item.progress)}%`
   if (item.status === 'error') return item.error ?? '실패'
   return '대기'
 }
@@ -205,7 +338,9 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState('')
   const [items, setItems] = useState<PhotoItem[]>([])
   const [sending, setSending] = useState(false)
+  const [showThanks, setShowThanks] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const sentCount = items.filter((i) => i.status === 'done').length
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -246,6 +381,7 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
           id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
           file,
           status: 'pending' as const,
+          progress: 0,
         })),
       ]
     })
@@ -254,26 +390,41 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
   const remaining = items.filter((i) => i.status !== 'done')
   const ready = name.trim().length > 0 && remaining.length > 0 && !sending
   const allDone = items.length > 0 && remaining.length === 0
+  const percent = toPercent(overallProgress(items))
+  const bytes = totalBytes(items)
 
   const send = async () => {
     setSending(true)
+    setNotice(null)
+    let failed = false
+
     // 한 장씩 보낸다. 한 장이 실패해도 나머지는 그대로 올라간다.
     for (const item of items) {
       if (item.status === 'done') continue
       setItems((prev) =>
-        prev.map((i) => (i.id === item.id ? { ...i, status: 'uploading', error: undefined } : i)),
+        prev.map((i) =>
+          i.id === item.id ? { ...i, status: 'uploading', progress: 0, error: undefined } : i,
+        ),
       )
       try {
-        await uploadPhoto(item.file, name.trim())
-        setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, status: 'done' } : i)))
+        await uploadPhoto(item.file, name.trim(), (progress) => {
+          setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, progress } : i)))
+        })
+        setItems((prev) =>
+          prev.map((i) => (i.id === item.id ? { ...i, status: 'done', progress: 1 } : i)),
+        )
       } catch (err) {
+        failed = true
         const message = (err as Error).message
         setItems((prev) =>
           prev.map((i) => (i.id === item.id ? { ...i, status: 'error', error: message } : i)),
         )
       }
     }
+
     setSending(false)
+    // 한 장이라도 실패했으면 축하 팝업 대신 목록에서 실패 사유를 보게 둔다
+    if (!failed) setShowThanks(true)
   }
 
   return createPortal(
@@ -320,7 +471,9 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
           onClick={() => fileInputRef.current?.click()}
           disabled={sending || items.length >= MAX_PHOTOS}
         >
-          {items.length > 0 ? `사진 더 선택 (${items.length}/${MAX_PHOTOS})` : '사진 선택'}
+          {items.length > 0
+            ? `사진 더 선택 (${items.length}/${MAX_PHOTOS} · ${formatBytes(bytes)})`
+            : '사진 선택'}
         </PickButton>
 
         {notice && <Notice role="status">{notice}</Notice>}
@@ -330,10 +483,33 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
             {items.map((item) => (
               <FileRow key={item.id}>
                 <FileName>{item.file.name}</FileName>
+                <FileSize>{formatBytes(item.file.size)}</FileSize>
                 <FileState tone={tone(item.status)}>{stateLabel(item)}</FileState>
               </FileRow>
             ))}
           </FileList>
+        )}
+
+        {(sending || percent > 0) && (
+          <ProgressWrap>
+            <ProgressHead>
+              <span>
+                {sending ? `보내는 중 (${sentCount}/${items.length})` : `${sentCount}장 보냄`} ·{' '}
+                {formatBytes(bytes)}</span>
+              <ProgressPercent
+                role="progressbar"
+                aria-valuenow={percent}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label="사진 전송 진행률"
+              >
+                {percent}%
+              </ProgressPercent>
+            </ProgressHead>
+            <ProgressTrack>
+              <ProgressBar ratio={percent / 100} />
+            </ProgressTrack>
+          </ProgressWrap>
         )}
 
         {/* 버튼이 왜 안 눌리는지 알려준다. 없으면 계속 대기 상태로만 보인다 */}
@@ -355,6 +531,32 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
 
         <Note>보내주신 사진은 신랑 신부만 볼 수 있어요. 청첩장에는 공개되지 않습니다.</Note>
       </Dialog>
+
+      {showThanks && (
+        <DoneBackdrop
+          role="alertdialog"
+          aria-modal="true"
+          aria-label="전송 완료"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DoneCard>
+            <DoneTitle>소중한 사진 감사합니다!</DoneTitle>
+            <DoneText>
+              {sentCount}장을 잘 받았어요.
+              <br />
+              오래도록 간직하겠습니다.
+            </DoneText>
+            <DoneActions>
+              <DoneConfirm type="button" onClick={onClose} autoFocus>
+                확인
+              </DoneConfirm>
+              <DoneMore type="button" onClick={() => setShowThanks(false)}>
+                더 보내기
+              </DoneMore>
+            </DoneActions>
+          </DoneCard>
+        </DoneBackdrop>
+      )}
     </Backdrop>,
     document.body,
   )

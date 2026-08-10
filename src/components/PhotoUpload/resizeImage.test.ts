@@ -1,6 +1,22 @@
 import { describe, it, expect } from 'vitest'
 import { fitWithin, canSendAsIs, MAX_EDGE, MAX_BYTES } from './resizeImage'
-import { MAX_PHOTOS } from './uploadPhotos'
+import {
+  MAX_PHOTOS,
+  SENT_WEIGHT,
+  overallProgress,
+  toPercent,
+  totalBytes,
+  formatBytes,
+  type PhotoItem,
+  type PhotoStatus,
+} from './uploadPhotos'
+
+const item = (size: number, status: PhotoStatus, progress = 0): PhotoItem => ({
+  id: `${size}-${status}-${progress}`,
+  file: { size } as File,
+  status,
+  progress,
+})
 
 describe('fitWithin', () => {
   it('작은 사진은 그대로 둔다', () => {
@@ -61,6 +77,49 @@ describe('장수 제한', () => {
     // 무제한이면 오래 걸려 하객이 화면을 닫고, 남은 사진은 올라가지 않는다.
     expect(MAX_PHOTOS).toBeGreaterThan(0)
     expect(MAX_PHOTOS).toBeLessThanOrEqual(30)
+  })
+})
+
+describe('진행률', () => {
+  it('아무것도 안 고르면 0% 다', () => {
+    expect(overallProgress([])).toBe(0)
+  })
+
+  it('장수가 아니라 용량으로 가중치를 준다', () => {
+    // 10MB 한 장과 1MB 한 장을 똑같이 세면, 큰 사진을 보내는 내내 막대가 멈춰 보인다
+    const items = [item(10_000_000, 'done', 1), item(1_000_000, 'pending')]
+    expect(toPercent(overallProgress(items))).toBe(91)
+  })
+
+  it('보내는 중인 사진의 진행률을 반영한다', () => {
+    expect(toPercent(overallProgress([item(1_000_000, 'uploading', 0.5)]))).toBe(50)
+  })
+
+  it('실패한 사진은 끝난 것으로 친다', () => {
+    // 더 진행되지 않는데 남겨두면 막대가 영영 차지 않아 멈춘 것처럼 보인다
+    expect(toPercent(overallProgress([item(1_000, 'error'), item(1_000, 'done', 1)]))).toBe(100)
+  })
+
+  it('전송이 끝나도 서버가 노션에 올리는 동안은 100% 가 되지 않는다', () => {
+    // 100% 에서 몇 초 멈춰 있으면 고장난 것으로 보인다
+    expect(SENT_WEIGHT).toBeLessThan(1)
+    expect(toPercent(overallProgress([item(1_000, 'uploading', SENT_WEIGHT)]))).toBeLessThan(100)
+  })
+
+  it('100% 를 넘지 않는다', () => {
+    expect(overallProgress([item(1_000, 'uploading', 1.5)])).toBe(1)
+  })
+})
+
+describe('용량 표시', () => {
+  it('합계를 낸다', () => {
+    expect(totalBytes([item(1_000, 'pending'), item(2_500, 'pending')])).toBe(3_500)
+  })
+
+  it('사진 앱과 같은 기준(1MB = 100만 바이트)으로 읽어준다', () => {
+    expect(formatBytes(512)).toBe('512B')
+    expect(formatBytes(120_000)).toBe('120KB')
+    expect(formatBytes(3_500_000)).toBe('3.5MB')
   })
 })
 
