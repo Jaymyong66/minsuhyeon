@@ -9,6 +9,12 @@ const Table = styled.table`
   margin: 0 auto;
   border-collapse: collapse;
   text-align: center;
+  /*
+   * 일곱 칸을 정확히 같은 너비로 나눈다.
+   * 기본값(auto)은 내용에 맞춰 열 너비를 정해서, 원이 들어간 일요일 칸과
+   * 두 자리 숫자가 있는 칸만 넓어진다.
+   */
+  table-layout: fixed;
 `
 
 const Weekday = styled.th`
