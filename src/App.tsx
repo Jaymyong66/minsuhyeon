@@ -11,7 +11,7 @@ import { Contacts } from './components/Contacts/Contacts'
 import { LocationMap } from './components/LocationMap/LocationMap'
 import { Guestbook } from './components/Guestbook/Guestbook'
 import { MusicPlayer } from './components/common/MusicPlayer'
-import { MusicBanner } from './components/common/MusicBanner'
+import { MusicToast } from './components/common/MusicToast'
 
 const GESTURE_EVENTS = ['touchstart', 'click', 'scroll', 'keydown'] as const
 
@@ -58,7 +58,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <audio ref={audioRef} src={BGM_SRC} loop />
-      <MusicBanner />
+      <MusicToast />
       <MusicPlayer playing={playing} onToggle={toggleMusic} />
       <Intro />
       <Greeting />
