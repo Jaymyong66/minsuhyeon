@@ -31,12 +31,12 @@ const Paragraph = styled.p`
  * styled(Reveal) 에 `& + &` 로 주면 먹지 않는다. Reveal 안쪽도 emotion 컴포넌트라
  * 두 클래스가 하나로 합쳐지면서, 형제 선택자가 찾을 클래스가 DOM 에 남지 않는다.
  *
- * 1.8em 은 본문 line-height 한 줄 높이. 문단 사이를 한 줄 비운 셈이 된다.
+ * 1.8em 이 본문 line-height 한 줄 높이라, 그 절반을 띄운다.
  */
 const Paragraphs = styled.div`
   display: flex;
   flex-direction: column;
-  gap: calc(${({ theme }) => theme.spacing(3)} + 1.8em);
+  gap: 0.9em;
 `
 
 export function Greeting() {

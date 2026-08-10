@@ -1,19 +1,29 @@
-@font-face {
-  font-family: 'ChosunMyungjo';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Pretendard', -apple-system, sans-serif;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
   background: #fdf9f6;
+}
+
+/*
+ * 버튼과 입력창은 body 의 폰트를 물려받지 않는다. 브라우저 기본값(Arial 등)이
+ * 그대로 남아서, 방명록 입력창과 버튼만 다른 글씨체로 보이고 있었다.
+ */
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* 제목은 같은 폰트에서 굵기로만 구분한다. 기본값 700 은 이 폰트에서 다소 세다 */
+h1,
+h2,
+h3 {
+  font-weight: 600;
 }
 
 #root {

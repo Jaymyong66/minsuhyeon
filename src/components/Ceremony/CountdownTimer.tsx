@@ -4,7 +4,7 @@ import { getTimeRemaining, type TimeRemaining } from './countdown'
 import { WEDDING_DATE_ISO } from '../../constants/weddingInfo'
 
 const Heading = styled.p`
-  font-family: ${({ theme }) => theme.font.serif};
+  font-family: ${({ theme }) => theme.font.heading};
   font-size: 1rem;
   /* accent 는 배경(#fdf9f6)과 대비가 약해 글씨로 쓰면 흐릿하다 */
   color: ${({ theme }) => theme.color.accentStrong};

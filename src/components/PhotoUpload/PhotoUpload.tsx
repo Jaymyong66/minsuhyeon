@@ -18,7 +18,7 @@ const Section = styled.section`
 `
 
 const Title = styled.h2`
-  font-family: ${({ theme }) => theme.font.serif};
+  font-family: ${({ theme }) => theme.font.heading};
   font-size: 1.3rem;
   color: ${({ theme }) => theme.color.accent};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -68,7 +68,7 @@ const Dialog = styled.div`
 
 const DialogTitle = styled.h3`
   margin: 0 0 ${({ theme }) => theme.spacing(2)};
-  font-family: ${({ theme }) => theme.font.serif};
+  font-family: ${({ theme }) => theme.font.heading};
   font-size: 1.1rem;
   color: ${({ theme }) => theme.color.text};
 `
@@ -265,7 +265,7 @@ const DoneCard = styled.div`
 
 const DoneTitle = styled.p`
   margin: 0;
-  font-family: ${({ theme }) => theme.font.serif};
+  font-family: ${({ theme }) => theme.font.heading};
   font-size: 1.15rem;
   line-height: 1.6;
   color: ${({ theme }) => theme.color.text};

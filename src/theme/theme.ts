@@ -11,10 +11,13 @@ export const theme = {
     accentStrong: '#b05a72',
     border: '#e8ddd3',
   },
+  /*
+   * 사이트 전체를 Pretendard 한 벌로 쓴다. 제목과 본문은 글씨체가 아니라 굵기로 구분한다.
+   * heading 과 body 를 따로 두는 건 나중에 제목만 바꾸고 싶을 때를 위한 자리다.
+   */
   font: {
-    serif: `'ChosunMyungjo', 'Noto Serif KR', serif`,
-    script: `'Dancing Script', cursive`,
-    body: `'Pretendard', -apple-system, sans-serif`,
+    heading: `'Pretendard Variable', Pretendard, -apple-system, sans-serif`,
+    body: `'Pretendard Variable', Pretendard, -apple-system, sans-serif`,
   },
   maxWidth: '480px',
   spacing: (n: number) => `${n * 8}px`,

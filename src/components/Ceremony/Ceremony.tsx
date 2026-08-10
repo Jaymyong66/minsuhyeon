@@ -10,7 +10,7 @@ const Section = styled.section`
 `
 
 const Title = styled.h2`
-  font-family: ${({ theme }) => theme.font.serif};
+  font-family: ${({ theme }) => theme.font.heading};
   font-size: 1.3rem;
   color: ${({ theme }) => theme.color.accent};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -29,7 +29,7 @@ const Place = styled.p`
 `
 
 const MonthLabel = styled.p`
-  font-family: ${({ theme }) => theme.font.serif};
+  font-family: ${({ theme }) => theme.font.heading};
   font-size: 1.1rem;
   color: ${({ theme }) => theme.color.text};
   margin-bottom: ${({ theme }) => theme.spacing(1)};

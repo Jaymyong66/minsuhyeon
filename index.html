@@ -6,9 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>민수 ❤ 수현 결혼합니다.</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet" />
+    <!--
+      Pretendard 한 벌로 통일한다. 그동안 CSS 에 이름만 적혀 있고 실제로 불러오지는
+      않아서, 아이폰은 SF Pro, 안드로이드는 또 다른 폰트로 제각각 보이고 있었다.
+      dynamic-subset 은 쓰이는 글자만 내려받아 한글이어도 가볍다.
+    -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
 
     <!-- 카카오톡 등 링크 공유 시 미리보기(Open Graph) -->
     <meta property="og:type" content="website" />

@@ -15,7 +15,7 @@ const Section = styled.section`
 `
 
 const Title = styled.h2`
-  font-family: ${({ theme }) => theme.font.serif};
+  font-family: ${({ theme }) => theme.font.heading};
   font-size: 1.3rem;
   color: ${({ theme }) => theme.color.accent};
   text-align: center;
