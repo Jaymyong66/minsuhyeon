@@ -27,6 +27,31 @@ const Photo = styled.img`
   cursor: pointer;
 `
 
+/* 처음에 보여줄 장수. 3열 격자라 세 줄이 딱 맞는다 */
+const INITIAL_COUNT = 9
+
+const MoreWrap = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(3)};
+  text-align: center;
+`
+
+/* 사진 업로드 섹션의 버튼과 같은 모양으로 맞춘다 */
+const MoreButton = styled.button`
+  display: inline-block;
+  padding: ${({ theme }) => theme.spacing(1.5)} ${({ theme }) => theme.spacing(3)};
+  border: 1px solid ${({ theme }) => theme.color.accent};
+  border-radius: 999px;
+  background: none;
+  color: ${({ theme }) => theme.color.accentStrong};
+  font-size: 0.95rem;
+  cursor: pointer;
+`
+
+const MoreCount = styled.span`
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+`
+
 /* 라이트박스는 document.body 로 포털되므로 뷰포트 전체를 덮는다.
    (#root 안에 두면 480px 칼럼이나 transform 을 가진 조상에 갇힌다) */
 const Overlay = styled.div`
@@ -192,6 +217,9 @@ function Lightbox({
 
 export function Gallery() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [shown, setShown] = useState(INITIAL_COUNT)
+  const visible = GALLERY_PHOTOS.slice(0, shown)
+  const hasMore = shown < GALLERY_PHOTOS.length
 
   const close = useCallback(() => setOpenIndex(null), [])
   const prev = useCallback(
@@ -209,7 +237,7 @@ export function Gallery() {
         <Title>갤러리</Title>
       </Reveal>
       <Grid>
-        {GALLERY_PHOTOS.map((photo, i) => (
+        {visible.map((photo, i) => (
           /* 행 안에서 좌→우로 번지도록 열 위치만큼만 지연시킨다.
              관찰자가 사진마다 따로 붙으므로 뒤쪽 사진까지 지연이 누적되지 않는다. */
           <Reveal key={photo.thumb} delay={(i % 3) * 80}>
@@ -222,6 +250,19 @@ export function Gallery() {
           </Reveal>
         ))}
       </Grid>
+      {hasMore && (
+        <MoreWrap>
+          <MoreButton
+            type="button"
+            onClick={() => setShown((n) => Math.min(GALLERY_PHOTOS.length, n + INITIAL_COUNT))}
+          >
+            더보기{' '}
+            <MoreCount>
+              ({shown}/{GALLERY_PHOTOS.length})
+            </MoreCount>
+          </MoreButton>
+        </MoreWrap>
+      )}
       {openIndex !== null && (
         <Lightbox index={openIndex} onClose={close} onPrev={prev} onNext={next} />
       )}
