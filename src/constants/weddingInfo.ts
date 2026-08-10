@@ -34,9 +34,6 @@ export const BRIDE_CONTACTS: ContactPerson[] = [
   { role: '신부', name: '김수현', phone: '010-4996-9402', bank: '국민', account: '304102-04-148851' },
 ]
 
-// TODO: 네이버 폼 생성 후 실제 URL로 교체 (TODO.md 참고)
-export const PHOTO_UPLOAD_FORM_URL = 'https://form.naver.com/REPLACE_ME'
-
 export const NAVER_MAP_CLIENT_ID = 'uqzmpj3t4s'
 
 export const BGM_SRC = '/bgm.m4a'

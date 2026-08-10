@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { createEntry, listEntries } from './guestbook.notion'
+import { createEntry, listEntries, createPhotoEntry } from './guestbook.notion'
 
 const originalFetch = global.fetch
 
@@ -70,5 +70,60 @@ describe('guestbook.notion', () => {
     expect(entries).toEqual([
       { id: 'page-1', name: '홍길동', message: '축하합니다!', createdAt: '2026-08-01T00:00:00.000Z' },
     ])
+  })
+
+  it('listEntries 는 사진 항목을 내보내지 않는다', async () => {
+    // 사진은 혼주만 노션에서 본다. 사이트로 새어 나가면 안 된다.
+    // 업로드가 로그인 없이 열려 있어서, 노출되면 아무 이미지나 청첩장에 걸릴 수 있다.
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        results: [
+          {
+            id: 'photo-row',
+            created_time: '2026-08-02T00:00:00.000Z',
+            properties: {
+              Name: { title: [{ plain_text: '김하객' }] },
+              Message: { rich_text: [] },
+              Photo: { files: [{ name: 'a.jpg', file: { url: 'https://secret/a.jpg' } }] },
+            },
+          },
+          {
+            id: 'blank-message',
+            created_time: '2026-08-02T00:00:00.000Z',
+            properties: {
+              Name: { title: [{ plain_text: '공백' }] },
+              Message: { rich_text: [{ plain_text: '   ' }] },
+            },
+          },
+          {
+            id: 'real-message',
+            created_time: '2026-08-01T00:00:00.000Z',
+            properties: {
+              Name: { title: [{ plain_text: '홍길동' }] },
+              Message: { rich_text: [{ plain_text: '축하합니다!' }] },
+            },
+          },
+        ],
+      }),
+    }) as unknown as typeof fetch
+
+    const entries = await listEntries()
+
+    expect(entries.map((e) => e.id)).toEqual(['real-message'])
+    expect(JSON.stringify(entries)).not.toContain('secret')
+  })
+
+  it('createPhotoEntry 는 Message 를 비운 채 사진만 붙인다', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    await createPhotoEntry({ name: '김하객', fileUploadId: 'upload-1', filename: 'a.jpg' })
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+    expect(body.properties.Name.title[0].text.content).toBe('김하객')
+    expect(body.properties.Photo.files[0].file_upload.id).toBe('upload-1')
+    // Message 를 채우면 사이트 목록에 사진 항목이 뜨게 된다
+    expect(body.properties.Message).toBeUndefined()
   })
 })

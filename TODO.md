@@ -6,7 +6,7 @@
 - [x] DB에 커넥션 연결 (DB `···` → 연결 → 커넥션 이름으로 검색). 안 하면 토큰이 유효해도 `object_not_found`가 남 — 노션은 권한 없음과 존재하지 않음을 구분해주지 않음
 - [x] `.env.local`에 `NOTION_TOKEN`, `NOTION_DATABASE_ID` 입력
 - [x] 실제 읽기/쓰기 동작 확인 (테스트 행 1건 작성 후 조회됨 — 노션에서 지우면 됨)
-- [ ] Vercel 프로젝트 Settings → Environment Variables에도 동일하게 등록 (배포용, 로컬과 별개)
+- [x] Vercel 프로젝트 Settings → Environment Variables에도 동일하게 등록 (배포용, 로컬과 별개)
 - **토큰 권한**: Read content + Insert content 만 켜고 Update content와 사용자 정보 접근은 끔. 토큰이 새어도 기존 메시지를 고치거나 워크스페이스 멤버 이메일을 읽을 수 없게 하기 위함. 대신 DB 스키마를 API로 못 고치니 속성 변경은 노션에서 직접 해야 함
 - **`CreatedAt` 속성은 불필요**: 코드가 노션 내장 메타데이터 `page.created_time`을 읽고 정렬도 `timestamp: "created_time"`으로 함. 별도 속성을 참조하는 곳이 없음
 - **속성 이름은 대소문자까지 정확해야 함**: `page.properties.Name` / `page.properties.Message`로 직접 찾기 때문에 `이름`이나 `name`이면 조회 시 실패
@@ -19,7 +19,9 @@
 
 ## 3. 지도 (네이버 지도)
 - [x] NCP Maps API 키(Dynamic Map) 발급 완료, `NAVER_MAP_CLIENT_ID`에 반영함
-- [ ] NCP 콘솔 → 해당 애플리케이션 → 서비스 URL에 `https://www.minsuhyeon.life`와 로컬 개발용 `http://localhost:5173` 등록 확인 (등록 안 하면 지도가 401 에러로 안 뜸)
+- [x] 프로덕션(`https://wedding.minsuhyeon.life`)에서 지도 정상 동작 확인 — 타일 로드 및 © NAVER 표기 확인
+- **`www.minsuhyeon.life`로 열면 지도만 401**: NCP 애플리케이션 서비스 URL에 `wedding` 서브도메인만 등록돼 있다. 실제 주소는 `wedding` 쪽이므로 문제는 없지만, 확인할 때 `www`로 열면 오진하기 쉽다
+- [ ] (선택) 로컬 개발용 `http://localhost:5199` 를 서비스 URL에 등록 — 안 하면 로컬에서만 지도가 401
 - [x] 지도 렌더링 코드 구현 완료 (`LocationMap.tsx` + `naverMapLoader.ts`), 서울올림픽파크텔 위치에 마커 표시
 
 ## 4. 사진 / 배경음악
