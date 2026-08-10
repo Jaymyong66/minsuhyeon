@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
 import { Reveal } from '../common/Reveal'
-import { uploadPhoto, type PhotoItem } from './uploadPhotos'
+import { uploadPhoto, MAX_PHOTOS, type PhotoItem } from './uploadPhotos'
 
 const Section = styled.section`
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)};
@@ -166,6 +166,23 @@ const CloseButton = styled.button`
   cursor: pointer;
 `
 
+/* 화면에서만 감춘다. display:none 이면 iOS 에서 클릭이 먹지 않는 경우가 있다 */
+const HiddenFileInput = styled.input`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+`
+
+const Notice = styled.p`
+  margin: ${({ theme }) => theme.spacing(1)} 0 0;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.color.accentStrong};
+  word-break: keep-all;
+`
+
 const Note = styled.p`
   margin: ${({ theme }) => theme.spacing(2)} 0 0;
   font-size: 0.75rem;
@@ -205,16 +222,33 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
     }
   }, [onClose, sending])
 
-  const pick = (files: FileList | null) => {
-    if (!files) return
-    setItems((prev) => [
-      ...prev,
-      ...Array.from(files).map((file) => ({
-        id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
-        file,
-        status: 'pending' as const,
-      })),
-    ])
+  const [notice, setNotice] = useState<string | null>(null)
+
+  /*
+   * FileList 가 아니라 이미 배열로 만들어진 File[] 을 받는다.
+   * FileList 는 input 과 연결된 라이브 객체라, 아래 setItems 콜백이 실행될 즈음이면
+   * value 를 비운 탓에 이미 비어 있을 수 있다. iOS 에서 사진이 하나도 안 담기던 원인이다.
+   */
+  const pick = (picked: File[]) => {
+    if (picked.length === 0) return
+    setItems((prev) => {
+      const room = MAX_PHOTOS - prev.length
+      if (picked.length > room) {
+        setNotice(
+          `한 번에 ${MAX_PHOTOS}장까지 보낼 수 있어요. 나머지는 보내신 뒤 다시 선택해주세요.`,
+        )
+      } else {
+        setNotice(null)
+      }
+      return [
+        ...prev,
+        ...picked.slice(0, Math.max(0, room)).map((file) => ({
+          id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
+          file,
+          status: 'pending' as const,
+        })),
+      ]
+    })
   }
 
   const remaining = items.filter((i) => i.status !== 'done')
@@ -262,20 +296,34 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
           disabled={sending}
         />
 
-        <input
+        {/*
+          hidden(display:none) 대신 눈에만 안 보이게 둔다.
+          iOS 사파리는 display:none 인 input 에 대한 프로그래밍 클릭을 무시하는 경우가 있다.
+        */}
+        <HiddenFileInput
           ref={fileInputRef}
           type="file"
           accept="image/*"
           multiple
-          hidden
+          tabIndex={-1}
+          aria-hidden="true"
           onChange={(e) => {
-            pick(e.target.files)
+            // FileList 는 라이브 객체라 value 를 비우면 같이 비워진다. 먼저 배열로 굳힌다.
+            const picked = Array.from(e.target.files ?? [])
+            pick(picked)
+            // 같은 사진을 다시 고를 수 있도록 비운다
             e.target.value = ''
           }}
         />
-        <PickButton type="button" onClick={() => fileInputRef.current?.click()} disabled={sending}>
-          사진 선택
+        <PickButton
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={sending || items.length >= MAX_PHOTOS}
+        >
+          {items.length > 0 ? `사진 더 선택 (${items.length}/${MAX_PHOTOS})` : '사진 선택'}
         </PickButton>
+
+        {notice && <Notice role="status">{notice}</Notice>}
 
         {items.length > 0 && (
           <FileList>
@@ -286,6 +334,14 @@ function UploadDialog({ onClose }: { onClose: () => void }) {
               </FileRow>
             ))}
           </FileList>
+        )}
+
+        {/* 버튼이 왜 안 눌리는지 알려준다. 없으면 계속 대기 상태로만 보인다 */}
+        {!ready && !sending && !allDone && items.length > 0 && !name.trim() && (
+          <Notice role="status">이름을 입력하시면 보낼 수 있어요.</Notice>
+        )}
+        {!ready && !sending && items.length === 0 && name.trim().length > 0 && (
+          <Notice role="status">보내실 사진을 선택해주세요.</Notice>
         )}
 
         <Actions>

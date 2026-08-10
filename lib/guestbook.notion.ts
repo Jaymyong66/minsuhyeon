@@ -22,10 +22,39 @@ function notionHeaders(token: string) {
   }
 }
 
+/** 재시도해도 되는 응답. 429 는 속도 제한, 529 는 노션 과부하로 둘 다 잠시 뒤 다시 걸면 된다 */
+export function isRetryable(status: number): boolean {
+  return status === 429 || status === 529
+}
+
+/** Retry-After 는 초 단위 정수다. 없거나 이상하면 기본값을 쓴다 */
+export function retryDelayMs(header: string | null, attempt: number): number {
+  const seconds = Number(header)
+  if (Number.isFinite(seconds) && seconds > 0) return Math.min(seconds * 1000, 10_000)
+  return Math.min(500 * 2 ** attempt, 4_000)
+}
+
+const MAX_ATTEMPTS = 4
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+/*
+ * 노션은 커넥션당 평균 초당 3회로 제한한다.
+ * 사진 한 장을 올리는 데 3번(업로드 생성 -> 전송 -> 행 생성)을 쓰므로,
+ * 여러 장을 연달아 올리면 제한에 닿는다. 429/529 는 Retry-After 를 지켜 다시 건다.
+ */
+async function notionFetch(url: string, init: RequestInit): Promise<Response> {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, init)
+    if (!isRetryable(res.status) || attempt >= MAX_ATTEMPTS - 1) return res
+    await sleep(retryDelayMs(res.headers?.get?.('Retry-After') ?? null, attempt))
+  }
+}
+
 export async function createEntry(input: { name: string; message: string }): Promise<void> {
   const { token, databaseId } = getConfig()
 
-  const res = await fetch('https://api.notion.com/v1/pages', {
+  const res = await notionFetch('https://api.notion.com/v1/pages', {
     method: 'POST',
     headers: notionHeaders(token),
     body: JSON.stringify({
@@ -54,7 +83,7 @@ export async function uploadPhoto(input: {
 }): Promise<string> {
   const { token } = getConfig()
 
-  const created = await fetch('https://api.notion.com/v1/file_uploads', {
+  const created = await notionFetch('https://api.notion.com/v1/file_uploads', {
     method: 'POST',
     headers: notionHeaders(token),
     body: JSON.stringify({ filename: input.filename, content_type: input.contentType }),
@@ -69,7 +98,7 @@ export async function uploadPhoto(input: {
   form.append('file', new Blob([new Uint8Array(input.data)], { type: input.contentType }), input.filename)
 
   // multipart 경계는 fetch 가 정해야 하므로 Content-Type 을 직접 넣지 않는다
-  const sent = await fetch(upload_url, {
+  const sent = await notionFetch(upload_url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -93,7 +122,7 @@ export async function createPhotoEntry(input: {
 }): Promise<void> {
   const { token, databaseId } = getConfig()
 
-  const res = await fetch('https://api.notion.com/v1/pages', {
+  const res = await notionFetch('https://api.notion.com/v1/pages', {
     method: 'POST',
     headers: notionHeaders(token),
     body: JSON.stringify({
@@ -122,7 +151,7 @@ export async function createPhotoEntry(input: {
 export async function listEntries(): Promise<GuestbookEntry[]> {
   const { token, databaseId } = getConfig()
 
-  const res = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+  const res = await notionFetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
     method: 'POST',
     headers: notionHeaders(token),
     body: JSON.stringify({

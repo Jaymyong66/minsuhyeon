@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { fitWithin, canSendAsIs, MAX_EDGE, MAX_BYTES } from './resizeImage'
+import { MAX_PHOTOS } from './uploadPhotos'
 
 describe('fitWithin', () => {
   it('작은 사진은 그대로 둔다', () => {
@@ -51,6 +52,15 @@ describe('canSendAsIs', () => {
     // 브라우저마다 볼 수 없어서 JPEG 로 바꿔 보내야 한다
     expect(canSendAsIs({ size: 100_000, type: 'image/heic' })).toBe(false)
     expect(canSendAsIs({ size: 100_000, type: 'image/heif' })).toBe(false)
+  })
+})
+
+describe('장수 제한', () => {
+  it('한 번에 보낼 수 있는 장수에 상한이 있다', () => {
+    // 노션이 커넥션당 초당 3회로 제한하는데 사진 한 장이 3회를 쓴다.
+    // 무제한이면 오래 걸려 하객이 화면을 닫고, 남은 사진은 올라가지 않는다.
+    expect(MAX_PHOTOS).toBeGreaterThan(0)
+    expect(MAX_PHOTOS).toBeLessThanOrEqual(30)
   })
 })
 
