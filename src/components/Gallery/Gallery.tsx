@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
+import { pillButton } from '../common/pillButton'
 import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
 import { GALLERY_PHOTOS } from '../../constants/dummyImages'
@@ -35,16 +36,8 @@ const MoreWrap = styled.div`
   text-align: center;
 `
 
-/* 사진 업로드 섹션의 버튼과 같은 모양으로 맞춘다 */
 const MoreButton = styled.button`
-  display: inline-block;
-  padding: ${({ theme }) => theme.spacing(1.5)} ${({ theme }) => theme.spacing(3)};
-  border: 1px solid ${({ theme }) => theme.color.accent};
-  border-radius: 999px;
-  background: none;
-  color: ${({ theme }) => theme.color.accentStrong};
-  font-size: 0.95rem;
-  cursor: pointer;
+  ${({ theme }) => pillButton(theme)}
 `
 
 const MoreCount = styled.span`

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
+import { pillButton } from '../common/pillButton'
 import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
 import { VENUE, NAVER_MAP_CLIENT_ID } from '../../constants/weddingInfo'
@@ -53,12 +54,7 @@ const NavButton = styled.a`
 `
 
 const Button = styled.a`
-  display: inline-block;
-  padding: ${({ theme }) => theme.spacing(1.5)} ${({ theme }) => theme.spacing(3)};
-  border: 1px solid ${({ theme }) => theme.color.accent};
-  border-radius: 999px;
-  color: ${({ theme }) => theme.color.accent};
-  text-decoration: none;
+  ${({ theme }) => pillButton(theme)}
 `
 
 const encodedName = encodeURIComponent(VENUE.name)

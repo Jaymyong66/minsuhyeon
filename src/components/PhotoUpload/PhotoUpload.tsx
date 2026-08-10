@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
+import { pillButton } from '../common/pillButton'
 import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
 import {
@@ -31,14 +32,7 @@ const Description = styled.p`
 `
 
 const OpenButton = styled.button`
-  display: inline-block;
-  padding: ${({ theme }) => theme.spacing(1.5)} ${({ theme }) => theme.spacing(3)};
-  border: 1px solid ${({ theme }) => theme.color.accent};
-  border-radius: 999px;
-  background: none;
-  color: ${({ theme }) => theme.color.accentStrong};
-  font-size: 0.95rem;
-  cursor: pointer;
+  ${({ theme }) => pillButton(theme)}
 `
 
 /* 모달은 body 로 포털한다. #root 는 480px 칼럼이고 Reveal 의 transform 에 갇힐 수 있다 */
