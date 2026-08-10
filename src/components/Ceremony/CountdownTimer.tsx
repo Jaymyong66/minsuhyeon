@@ -5,14 +5,15 @@ import { WEDDING_DATE_ISO } from '../../constants/weddingInfo'
 
 const Heading = styled.p`
   font-family: ${({ theme }) => theme.font.serif};
-  font-size: 0.9rem;
-  color: ${({ theme }) => theme.color.accent};
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+  font-size: 1rem;
+  /* accent 는 배경(#fdf9f6)과 대비가 약해 글씨로 쓰면 흐릿하다 */
+  color: ${({ theme }) => theme.color.accentStrong};
+  margin-bottom: ${({ theme }) => theme.spacing(2.5)};
 `
 
 const Row = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1.5)};
   justify-content: center;
 `
 
@@ -20,12 +21,29 @@ const Unit = styled.div`
   text-align: center;
 `
 
-const Value = styled.div`
-  font-size: 1.5rem;
+/*
+ * 원 안의 글씨는 accent 가 아니라 onAccent 로 쓴다.
+ * accent(#f2b8c6)는 밝아서 흰 글씨를 얹으면 대비가 1.69:1 밖에 안 되어
+ * 밝은 화면에서는 숫자가 거의 보이지 않는다.
+ */
+const Circle = styled.div`
+  width: clamp(62px, 18vw, 84px);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.color.accent};
+  color: ${({ theme }) => theme.color.onAccent};
+  font-size: clamp(1.25rem, 5.5vw, 1.6rem);
   font-weight: 600;
+  /* 숫자가 매초 바뀌어도 원 안에서 폭이 흔들리지 않게 */
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 2px 8px rgba(178, 90, 114, 0.18);
 `
 
 const Label = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(1)};
   font-size: 0.75rem;
   color: ${({ theme }) => theme.color.textMuted};
 `
@@ -49,25 +67,22 @@ export function Countdown() {
 
   return (
     <>
-      <Heading>
-        우리의 특별한 날까지
-        <br />
-      </Heading>
+      <Heading>우리의 특별한 날까지</Heading>
       <Row>
         <Unit>
-          <Value>{pad(remaining.days)}</Value>
+          <Circle>{remaining.days}</Circle>
           <Label>일</Label>
         </Unit>
         <Unit>
-          <Value>{pad(remaining.hours)}</Value>
+          <Circle>{pad(remaining.hours)}</Circle>
           <Label>시간</Label>
         </Unit>
         <Unit>
-          <Value>{pad(remaining.minutes)}</Value>
+          <Circle>{pad(remaining.minutes)}</Circle>
           <Label>분</Label>
         </Unit>
         <Unit>
-          <Value>{pad(remaining.seconds)}</Value>
+          <Circle>{pad(remaining.seconds)}</Circle>
           <Label>초</Label>
         </Unit>
       </Row>
