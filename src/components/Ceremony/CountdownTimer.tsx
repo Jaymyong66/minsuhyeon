@@ -22,9 +22,8 @@ const Unit = styled.div`
 `
 
 /*
- * 원 안의 글씨는 accent 가 아니라 onAccent 로 쓴다.
- * accent(#f2b8c6)는 밝아서 흰 글씨를 얹으면 대비가 1.69:1 밖에 안 되어
- * 밝은 화면에서는 숫자가 거의 보이지 않는다.
+ * 원 안의 숫자는 흰색. accent(#f2b8c6) 위라 대비가 1.69:1 로 낮지만
+ * (밝은 야외에서는 흐릿하게 보인다) 레퍼런스와 같은 느낌을 위해 택했다.
  */
 const Circle = styled.div`
   width: clamp(62px, 18vw, 84px);
@@ -34,7 +33,7 @@ const Circle = styled.div`
   justify-content: center;
   border-radius: 50%;
   background: ${({ theme }) => theme.color.accent};
-  color: ${({ theme }) => theme.color.onAccent};
+  color: #fff;
   font-size: clamp(1.25rem, 5.5vw, 1.6rem);
   font-weight: 600;
   /* 숫자가 매초 바뀌어도 원 안에서 폭이 흔들리지 않게 */
