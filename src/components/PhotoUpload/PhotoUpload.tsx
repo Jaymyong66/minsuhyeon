@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
+import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
 import {
   uploadPhoto,
@@ -17,10 +18,7 @@ const Section = styled.section`
   text-align: center;
 `
 
-const Title = styled.h2`
-  font-family: ${({ theme }) => theme.font.heading};
-  font-size: 1.3rem;
-  color: ${({ theme }) => theme.color.accent};
+const Title = styled(SectionTitle)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
+import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
 import { VENUE, NAVER_MAP_CLIENT_ID } from '../../constants/weddingInfo'
 import { loadNaverMaps } from './naverMapLoader'
@@ -9,10 +10,7 @@ const Section = styled.section`
   text-align: center;
 `
 
-const Title = styled.h2`
-  font-family: ${({ theme }) => theme.font.heading};
-  font-size: 1.3rem;
-  color: ${({ theme }) => theme.color.accent};
+const Title = styled(SectionTitle)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `
 

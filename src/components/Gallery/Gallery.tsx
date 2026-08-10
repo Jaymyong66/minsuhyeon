@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from '@emotion/styled'
+import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
 import { GALLERY_PHOTOS } from '../../constants/dummyImages'
 
@@ -8,11 +9,7 @@ const Section = styled.section`
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)};
 `
 
-const Title = styled.h2`
-  font-family: ${({ theme }) => theme.font.heading};
-  font-size: 1.3rem;
-  color: ${({ theme }) => theme.color.accent};
-  text-align: center;
+const Title = styled(SectionTitle)`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `
 

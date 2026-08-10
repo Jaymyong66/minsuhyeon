@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
 import { GREETING_MESSAGE_PARAGRAPHS } from '../../constants/weddingInfo'
 
@@ -7,11 +8,7 @@ const Section = styled.section`
   text-align: center;
 `
 
-const Title = styled.h2`
-  /* 아래 본문과 같은 글씨체로 맞춘다 */
-  font-family: ${({ theme }) => theme.font.body};
-  font-size: 1.2rem;
-  color: ${({ theme }) => theme.color.accent};
+const Title = styled(SectionTitle)`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `
 
