@@ -89,6 +89,7 @@ const MissionNote = styled.span`
 
 const MissionReward = styled.p`
   margin: ${({ theme }) => theme.spacing(3)} 0 0;
+  white-space: pre-line;
   padding: ${({ theme }) => theme.spacing(2)};
   border-radius: 12px;
   background: rgba(242, 184, 198, 0.18);
