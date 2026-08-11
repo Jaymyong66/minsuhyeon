@@ -26,7 +26,7 @@ const Unit = styled.div`
  * (밝은 야외에서는 흐릿하게 보인다) 레퍼런스와 같은 느낌을 위해 택했다.
  */
 const Circle = styled.div`
-  width: clamp(50px, 14vw, 66px);
+  width: clamp(44px, 12.5vw, 58px);
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -34,7 +34,7 @@ const Circle = styled.div`
   border-radius: 50%;
   background: ${({ theme }) => theme.color.accent};
   color: #fff;
-  font-size: clamp(1.05rem, 4.4vw, 1.3rem);
+  font-size: clamp(0.95rem, 3.9vw, 1.15rem);
   font-weight: 400;
   /* 숫자가 매초 바뀌어도 원 안에서 폭이 흔들리지 않게 */
   font-variant-numeric: tabular-nums;
