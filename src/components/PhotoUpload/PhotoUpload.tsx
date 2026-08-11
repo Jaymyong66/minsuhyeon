@@ -82,7 +82,9 @@ const MissionItem = styled.li`
 
 const MissionNote = styled.span`
   display: block;
-  margin-top: 2px;
+  margin-top: 4px;
+  white-space: pre-line;
+  line-height: 1.7;
   font-size: 0.78rem;
   color: ${({ theme }) => theme.color.textMuted};
 `
@@ -646,11 +648,11 @@ export function PhotoUpload() {
       <Reveal delay={180}>
         <MissionTitle>{PHOTO_MISSION.title}</MissionTitle>
         <MissionList>
-          {PHOTO_MISSION.items.map((item, i) => (
-            <MissionItem key={item}>
+          {PHOTO_MISSION.items.map((item) => (
+            <MissionItem key={item.text}>
               <span>
-                {item}
-                {i + 1 === PHOTO_MISSION.noteFor && <MissionNote>({PHOTO_MISSION.note})</MissionNote>}
+                {item.text}
+                {'note' in item && <MissionNote>{item.note}</MissionNote>}
               </span>
             </MissionItem>
           ))}
