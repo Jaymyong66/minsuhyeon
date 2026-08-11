@@ -1,4 +1,5 @@
 import heroIntro from '../assets/hero-intro.jpeg'
+import missionPhoto from '../assets/gallery/full/026.jpg'
 
 /*
  * 갤러리 사진은 두 벌로 둔다.
@@ -33,3 +34,6 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = Object.keys(thumbModules)
   })
 
 export const DUMMY_HERO_IMAGE = heroIntro
+
+/* 사진 미션 안내에 쓰는 한 장. 갤러리와 같은 파일이라 따로 더 받지 않는다 */
+export const MISSION_PHOTO = missionPhoto

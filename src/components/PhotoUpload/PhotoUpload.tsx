@@ -4,6 +4,8 @@ import styled from '@emotion/styled'
 import { pillButton } from '../common/pillButton'
 import { SectionTitle } from '../common/SectionTitle'
 import { Reveal } from '../common/Reveal'
+import { MISSION_PHOTO } from '../../constants/dummyImages'
+import { PHOTO_MISSION } from '../../constants/weddingInfo'
 import {
   uploadPhoto,
   overallProgress,
@@ -23,8 +25,82 @@ const Title = styled(SectionTitle)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `
 
-const Description = styled.p`
+const MissionPhoto = styled.img`
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 12px;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
+`
+
+const MissionTitle = styled.p`
+  margin: 0 0 ${({ theme }) => theme.spacing(2)};
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.color.text};
+  word-break: keep-all;
+`
+
+/* 번호는 직접 그린다. 기본 마커는 왼쪽에 붙어 가운데 정렬한 섹션에서 어긋나 보인다 */
+const MissionList = styled.ol`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: mission;
+  display: inline-flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  text-align: left;
+`
+
+const MissionItem = styled.li`
+  counter-increment: mission;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.color.text};
+  word-break: keep-all;
+
+  &::before {
+    content: counter(mission);
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.color.accent};
+    color: #fff;
+    font-size: 0.72rem;
+  }
+`
+
+const MissionNote = styled.span`
+  display: block;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  color: ${({ theme }) => theme.color.textMuted};
+`
+
+const MissionReward = styled.p`
+  margin: ${({ theme }) => theme.spacing(3)} 0 0;
+  padding: ${({ theme }) => theme.spacing(2)};
+  border-radius: 12px;
+  background: rgba(242, 184, 198, 0.18);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: ${({ theme }) => theme.color.text};
+  word-break: keep-all;
+`
+
+const Description = styled.p`
+  margin: ${({ theme }) => theme.spacing(3)} 0;
+  white-space: pre-line;
   color: ${({ theme }) => theme.color.textMuted};
   font-size: 0.9rem;
   line-height: 1.7;
@@ -564,7 +640,22 @@ export function PhotoUpload() {
         <Title>사진 업로드</Title>
       </Reveal>
       <Reveal delay={120}>
-        <Description>결혼식에서 찍은 소중한 사진을 보내주세요</Description>
+        <MissionPhoto src={MISSION_PHOTO} alt="" loading="lazy" />
+      </Reveal>
+      <Reveal delay={180}>
+        <MissionTitle>{PHOTO_MISSION.title}</MissionTitle>
+        <MissionList>
+          {PHOTO_MISSION.items.map((item, i) => (
+            <MissionItem key={item}>
+              <span>
+                {item}
+                {i + 1 === PHOTO_MISSION.noteFor && <MissionNote>({PHOTO_MISSION.note})</MissionNote>}
+              </span>
+            </MissionItem>
+          ))}
+        </MissionList>
+        <MissionReward>{PHOTO_MISSION.reward}</MissionReward>
+        <Description>{PHOTO_MISSION.closing}</Description>
       </Reveal>
       <Reveal delay={240}>
         <OpenButton type="button" onClick={() => setOpen(true)}>
