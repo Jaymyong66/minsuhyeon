@@ -59,10 +59,11 @@ const Panel = styled.div<{ open: boolean }>`
   transition: grid-template-rows 0.3s ease;
 `
 
-const PanelInner = styled.div`
+const PanelInner = styled.div<{ open: boolean }>`
   min-height: 0;
   overflow: hidden;
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ open, theme }) => (open ? theme.spacing(1) : 0)};
+  transition: padding-bottom 0.3s ease;
 `
 
 const AccountCard = styled.div`
@@ -143,7 +144,7 @@ function AccordionSide({
         </Chevron>
       </SideHeader>
       <Panel open={open}>
-        <PanelInner>
+        <PanelInner open={open}>
           <ContactList people={people} />
         </PanelInner>
       </Panel>
