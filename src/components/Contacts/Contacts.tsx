@@ -11,7 +11,16 @@ const Section = styled.section`
 `
 
 const Title = styled(SectionTitle)`
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+`
+
+const Description = styled.p`
+  margin: 0 0 ${({ theme }) => theme.spacing(3)};
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: 0.88rem;
+  line-height: 1.8;
+  text-align: center;
+  word-break: keep-all;
 `
 
 /* 각 그룹이 Reveal 로 감싸져 형제가 아니게 되므로 :last-of-type 대신 명시적 플래그를 쓴다. */
@@ -33,6 +42,10 @@ const SideHeader = styled.button`
   cursor: pointer;
 `
 
+const SideLabel = styled.span`
+  font-weight: 500;
+`
+
 const Chevron = styled.span<{ open: boolean }>`
   display: inline-block;
   transition: transform 0.25s ease;
@@ -46,39 +59,66 @@ const Panel = styled.div<{ open: boolean }>`
   transition: grid-template-rows 0.3s ease;
 `
 
-const PanelInner = styled.div`
+const PanelInner = styled.div<{ open: boolean }>`
   min-height: 0;
   overflow: hidden;
+  padding-bottom: ${({ open, theme }) => (open ? theme.spacing(1) : 0)};
+  transition: padding-bottom 0.3s ease;
 `
 
-const PersonRow = styled.div`
-  display: flex;
-  justify-content: space-between;
+const AccountCard = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1.5)} 0;
-  border-top: 1px solid ${({ theme }) => theme.color.border};
+  gap: ${({ theme }) => theme.spacing(1.5)};
+  padding: ${({ theme }) => theme.spacing(1.75)} ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: 8px;
+  background: ${({ theme }) => theme.color.surface};
 `
 
 const PersonInfo = styled.div`
-  font-size: 0.85rem;
   text-align: left;
+  min-width: 0;
+`
+
+const Role = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(0.75)};
+  color: ${({ theme }) => theme.color.text};
+  font-size: 0.9rem;
+  font-weight: 500;
+`
+
+const AccountNumber = styled.div`
+  color: ${({ theme }) => theme.color.text};
+  font-size: 0.98rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+`
+
+const BankOwner = styled.div`
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: 0.82rem;
+  line-height: 1.5;
 `
 
 function ContactList({ people }: { people: ContactPerson[] }) {
   return (
     <>
       {people.map((c) => (
-        <PersonRow key={c.role}>
+        <AccountCard key={c.role}>
           <PersonInfo>
-            <div>
+            <Role>
               {c.role} {c.name}
-            </div>
-            <div>{c.phone}</div>
-            <div>{formatAccountForCopy(c.bank, c.account)}</div>
+            </Role>
+            <AccountNumber>{c.account}</AccountNumber>
+            <BankOwner>
+              {c.bank} {c.name}
+            </BankOwner>
           </PersonInfo>
           <CopyButton value={formatAccountForCopy(c.bank, c.account)} />
-        </PersonRow>
+        </AccountCard>
       ))}
     </>
   )
@@ -98,13 +138,13 @@ function AccordionSide({
   return (
     <SideGroup last={last}>
       <SideHeader type="button" onClick={() => setOpen((prev) => !prev)} aria-expanded={open}>
-        {label}
+        <SideLabel>{label}</SideLabel>
         <Chevron open={open} aria-hidden="true">
           ⌄
         </Chevron>
       </SideHeader>
       <Panel open={open}>
-        <PanelInner>
+        <PanelInner open={open}>
           <ContactList people={people} />
         </PanelInner>
       </Panel>
@@ -117,12 +157,15 @@ export function Contacts() {
     <Section>
       <Reveal>
         <Title>마음 전하실 곳</Title>
+        <Description>
+          멀리서도 축하의 마음을 전하고 싶으신 분들을 위해 계좌번호를 안내드립니다.
+        </Description>
       </Reveal>
       <Reveal delay={120}>
-        <AccordionSide label="신랑측" people={GROOM_CONTACTS} />
+        <AccordionSide label="신랑 측" people={GROOM_CONTACTS} />
       </Reveal>
       <Reveal delay={220}>
-        <AccordionSide label="신부측" people={BRIDE_CONTACTS} last />
+        <AccordionSide label="신부 측" people={BRIDE_CONTACTS} last />
       </Reveal>
     </Section>
   )
